@@ -1,0 +1,9 @@
+header {
+  --region-space: var(--space-xl);
+  width: 100%;
+
+  object {
+    height: var(--size-step-5);
+    pointer-events: none;
+  }
+}

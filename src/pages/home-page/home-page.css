@@ -1,0 +1,19 @@
+:host {
+    display: block;
+    height: 100vh;
+    width: 100vw;
+    .content-container {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: 100%;
+        gap: var(--space-s);
+        min-height: 0;
+        height: 100%;
+    }
+    main {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        
+    }
+}

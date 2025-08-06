@@ -1,0 +1,13 @@
+<main>
+    <app-header></app-header>
+    <div class="content-container">
+        <div class="content-sections">
+            @for (section of contentSections(); track section.id) {
+                <app-content-section [content]="section.content" [id]="section.id"></app-content-section>
+            }
+            <button (click)="addSection()">Add New Content Section</button>
+        </div>
+        <app-content-display></app-content-display>
+    </div>
+    <!-- Footer Component -->
+</main>

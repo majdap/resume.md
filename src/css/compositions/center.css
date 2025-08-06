@@ -1,0 +1,9 @@
+.center {
+    box-sizing: content-box;
+    margin-inline: auto;
+    max-inline-size: 80ch;
+    padding-inline-start: var(--spacing-s);
+    padding-inline-end: var(--spacing-s);
+    display: flex;
+    flex-direction: column;
+}
