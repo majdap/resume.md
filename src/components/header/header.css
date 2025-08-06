@@ -1,0 +1,4 @@
+:host {
+    top: var(--space-xs);
+    left: var(--space-xs);
+}

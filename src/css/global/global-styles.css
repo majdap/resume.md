@@ -73,7 +73,7 @@ body {
 
 h1 {
     font-size: var(--size-step-6);
-    max-width: 20ch;
+    /* max-width: 20ch; */
 }
 
 h2 {

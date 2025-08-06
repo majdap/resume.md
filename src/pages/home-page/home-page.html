@@ -1,13 +1,21 @@
 <main>
+  <div class="left-side">
     <app-header></app-header>
-    <div class="content-container">
-        <div class="content-sections">
-            @for (section of contentSections(); track section.id) {
-                <app-content-section [content]="section.content" [id]="section.id"></app-content-section>
-            }
-            <button (click)="addSection()">Add New Content Section</button>
-        </div>
-        <app-content-display></app-content-display>
+    <div class="content-sections">
+      @for (section of contentSections(); track section.id) {
+      <app-content-section
+        [content]="section.content"
+        [id]="section.id"
+      ></app-content-section>
+      }
+      <button (click)="addSection()">Add New Content Section</button>
     </div>
-    <!-- Footer Component -->
+  </div>
+  <div class="right-side">
+    <!-- In future we will have option to display more pages not single display -->
+    @for (page of [0]; track page) {
+    <app-content-display></app-content-display>
+    }
+  </div>
+  <!-- Footer Component -->
 </main>
