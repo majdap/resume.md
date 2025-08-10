@@ -3,6 +3,7 @@
   display: grid;
   border: 1px solid var(--color-primary-dark);
   border-radius: var(--radius-s);
-  height: 100%;
-  max-height: 100%;
+  width: 100%;
+  height: auto;
+  padding: var(--space-xs);
 }

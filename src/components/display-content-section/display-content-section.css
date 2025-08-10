@@ -1,0 +1,8 @@
+:host {
+  position: relative;
+  .edit-btn {
+    position: absolute;
+    top: var(--space-xs);
+    right: var(--space-xs);
+  }
+}
