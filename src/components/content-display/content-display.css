@@ -1,43 +1,100 @@
+/*
+  Content Display (CV Page)
+  Goal: Maintain identical on-screen and printed layout & type scale.
+  Strategy:
+  - Use physical A4 dimensions (210mm x 297mm) so what you see equals print size at 100%.
+  - Lock internal typography to fixed sizes (avoid root fluid vw-based clamp changes on print).
+  - Allow horizontal scroll on very small viewports instead of shrinking layout (optional scaling could be added later with a wrapper).
+*/
+
 :host {
-  /* Use container query approach for proportional scaling */
-  width: clamp(300px, 90vw, 595px); /* Scale width between 300px and 595px */
-  /* Remove fixed height and let aspect-ratio handle it */
-  aspect-ratio: 1 / 1.4142; /* A4 aspect ratio will calculate height automatically */
+  /* A4 physical page size expressed in px for cross-browser identical wrapping */
+  --cv-page-width: 794px; /* 210mm ≈ 793.7px */
+  --cv-page-height: 1123px; /* 297mm ≈ 1122.5px */
+  --cv-page-padding: 45px; /* ~12mm, use integer px */
+  width: var(--cv-page-width);
+  min-height: var(--cv-page-height);
+  box-sizing: border-box;
 
   display: block;
+  margin: 0 auto; /* center in preview column */
+  padding: var(--cv-page-padding); /* printable margin inside page */
+
+  background: #fff;
   border: 1px solid var(--color-primary-dark);
   border-radius: var(--radius-s);
-  padding: var(--space-m);
-  background-color: white;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
-  /* Ensure content scales properly within the container */
-  overflow: visible;
   position: relative;
+  overflow: visible;
 
-  /* Scale content proportionally on smaller screens */
-  transform-origin: top center;
+  /* Lock type scale inside page (11pt ≈ 14.6667px) */
+  font-size: 14.6667px; /* base body size */
+  line-height: 1.35;
+  /* Override fluid clamp() values locally to fixed px to avoid viewport-based shifts (esp. Firefox print) */
+  --size-step--2: 9px;
+  --size-step--1: 11px;
+  --size-step-0: 13px;
+  --size-step-1: 14.6667px;
+  --size-step-2: 16px;
+  --size-step-3: 18px;
+  --size-step-4: 22px;
+  --size-step-5: 27px;
+  --size-step-6: 32px;
+  font-variant-ligatures: none;
+  font-synthesis: none; /* prevent synthetic bold/italic affecting metrics */
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: 0;
+  word-spacing: 0;
+  word-break: normal;
+  overflow-wrap: break-word;
+  hyphens: manual;
+  font-kerning: normal;
+  font-feature-settings: "kern" 0;
+}
+
+/* Fixed heading sizes (prevent fluid vw shifts between preview & print) */
+:host h1 {
+  font-size: 26.6667px;
+  line-height: 1.15;
+}
+:host h2 {
+  font-size: 21.3333px;
+  line-height: 1.2;
+}
+:host h3 {
+  font-size: 17.3333px;
+  line-height: 1.25;
+}
+:host h4 {
+  font-size: 14.6667px;
+  line-height: 1.3;
+}
+
+/* Optional: Avoid breaking mid-section */
+:host > * {
+  page-break-inside: avoid;
 }
 
 /* Print styles */
+@page {
+  size: A4 portrait;
+  margin: 0; /* we handle margins with internal padding */
+}
+
 @media print {
   :host {
-    width: 100% !important;
-    height: auto !important;
-    max-width: none !important;
-    max-height: none !important;
-    aspect-ratio: auto !important;
-    border: none !important;
+    width: var(--cv-page-width) !important;
+    min-height: var(--cv-page-height) !important;
+    padding: var(--cv-page-padding) !important;
+    margin: 0 auto !important;
+    /* Keep border metrics to preserve line length; make invisible if desired */
+    border-color: transparent !important;
     border-radius: 0 !important;
     box-shadow: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    background: white !important;
-    transform: none !important;
-    overflow: visible !important;
-    position: static !important;
-
-    /* Ensure it fills the print page */
-    page-break-inside: avoid;
+    background: #fff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 }

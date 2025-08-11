@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { DisplayContentSection } from '../display-content-section/display-content-section';
+import { Component, HostBinding, HostListener, inject } from '@angular/core';
+import { DisplayContentSection } from './display-content-section/display-content-section';
 import { ContentService } from '../../services/content-service.service';
 
 @Component({
@@ -11,4 +11,26 @@ import { ContentService } from '../../services/content-service.service';
 export class ContentDisplay {
   private readonly contentService = inject(ContentService);
   readonly sections = this.contentService.contentSections;
+
+  // Attribute toggled to force layout reflow before printing (Firefox line wrap consistency)
+  @HostBinding('attr.data-print-reflow') reflowToggle = false;
+
+  @HostListener('window:beforeprint') async handleBeforePrint() {
+    const anyDoc: any = document;
+    if (anyDoc.fonts?.ready) {
+      try {
+        await anyDoc.fonts.ready;
+      } catch {
+        /* ignore */
+      }
+    }
+    // Force style + layout flush
+    this.reflowToggle = !this.reflowToggle;
+    void document.body.offsetHeight; // access to ensure reflow
+  }
+
+  @HostListener('window:afterprint') handleAfterPrint() {
+    // Reset (not strictly necessary but keeps parity)
+    this.reflowToggle = !this.reflowToggle;
+  }
 }

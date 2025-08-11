@@ -5,11 +5,10 @@ import {
   input,
   SecurityContext,
 } from '@angular/core';
-import { ContentService } from '../../services/content-service.service';
 import markdownit from 'markdown-it';
 import mdMark from 'markdown-it-mark';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ContentSection } from '../../types/content-section.type';
+import { ContentSection } from '../../../types/content-section.type';
 
 @Component({
   selector: 'app-display-content-section',

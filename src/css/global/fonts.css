@@ -40,7 +40,7 @@
 
 @font-face {
   font-family: "Martian Mono";
-  font-style: bold;
+  font-style: normal;
   src: url("/fonts/MartianMono-Bold.ttf") format("truetype");
   font-weight: 700;
   font-display: swap;

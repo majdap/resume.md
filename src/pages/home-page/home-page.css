@@ -101,10 +101,13 @@
       margin: 0 !important;
       background: white !important;
       overflow: visible !important;
+      display: flex !important;
+      justify-content: center !important;
+      align-items: flex-start !important;
 
       app-content-display {
-        margin: 0 !important;
-        width: 100% !important;
+        margin: 0 auto !important; /* keep intrinsic A4 width */
+        width: 210mm !important; /* ensure consistency */
         height: auto !important;
       }
     }
