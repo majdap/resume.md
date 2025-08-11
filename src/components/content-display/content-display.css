@@ -1,9 +1,43 @@
 :host {
-  aspect-ratio: 1 / 1.414; /* A4 aspect ratio */
-  display: grid;
+  /* Use container query approach for proportional scaling */
+  width: clamp(300px, 90vw, 595px); /* Scale width between 300px and 595px */
+  /* Remove fixed height and let aspect-ratio handle it */
+  aspect-ratio: 1 / 1.4142; /* A4 aspect ratio will calculate height automatically */
+
+  display: block;
   border: 1px solid var(--color-primary-dark);
   border-radius: var(--radius-s);
-  width: 100%;
-  height: auto;
-  padding: var(--space-xs);
+  padding: var(--space-m);
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  /* Ensure content scales properly within the container */
+  overflow: visible;
+  position: relative;
+
+  /* Scale content proportionally on smaller screens */
+  transform-origin: top center;
+}
+
+/* Print styles */
+@media print {
+  :host {
+    width: 100% !important;
+    height: auto !important;
+    max-width: none !important;
+    max-height: none !important;
+    aspect-ratio: auto !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: white !important;
+    transform: none !important;
+    overflow: visible !important;
+    position: static !important;
+
+    /* Ensure it fills the print page */
+    page-break-inside: avoid;
+  }
 }

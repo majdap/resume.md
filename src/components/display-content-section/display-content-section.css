@@ -1,8 +1,53 @@
 :host {
+  --clickable-space: 60px;
   position: relative;
+  display: block;
+  overflow: visible;
+
+  /* Add padding to create hoverable space for the button */
+  padding-left: var(--clickable-space);
+  margin-left: calc(
+    -1 * var(--clickable-space)
+  ); /* Offset the padding to maintain layout */
+
+  /* Show button on hover */
+  &:hover .edit-btn {
+    opacity: 1;
+    visibility: visible;
+  }
+
   .edit-btn {
     position: absolute;
-    top: var(--space-xs);
-    right: var(--space-xs);
+
+    left: 10px; /* Position within the padding area */
+    z-index: 100;
+    cursor: pointer;
+    filter: grayscale(10%) brightness(1.2);
+    background: transparent;
+    border: none;
+    font-size: var(--size-step-2);
+
+    /* Initially hidden */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+
+    /* Keep button visible when hovering the button itself */
+    &:hover {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+}
+
+/* Print styles - Hide edit buttons when printing */
+@media print {
+  :host {
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+
+    .edit-btn {
+      display: none !important;
+    }
   }
 }
