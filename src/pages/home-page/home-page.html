@@ -1,6 +1,18 @@
 <main>
   <div class="left-side">
     <app-header></app-header>
+    @if (showBrowserNote()) {
+    <div class="browser-warning">
+      <span>
+        Due to differences in font-rendering in JS engines, preview may be
+        inconsistent on non‑Chromium browsers. For best results, use Chrome or
+        export PDF.
+      </span>
+      <button (click)="dismissBrowserNote()" style="margin-left: 12px">
+        Dismiss
+      </button>
+    </div>
+    }
     <div class="content-sections">
       @for (section of contentSections(); track section.id) {
       <app-content-section
@@ -8,14 +20,25 @@
         [id]="section.id"
       ></app-content-section>
       }
-      <button (click)="addSection()">Add New Content Section</button>
+      <div style="display: flex; gap: 0.5rem">
+        <button (click)="addSection()">Add New Content Section</button>
+        <button (click)="exportPdf()">Export PDF</button>
+        <button (click)="showDomPreview()" [disabled]="previewMode() === 'dom'">
+          Show DOM Preview
+        </button>
+      </div>
     </div>
   </div>
   <div class="right-side">
     <!-- In future we will have option to display more pages not single display -->
-    @for (page of [0]; track page) {
+    @switch (previewMode()) { @case ('dom') { @for (page of [0]; track page) {
     <app-content-display></app-content-display>
-    }
+    } } @case ('pdf') { @if (safePdfUrl()) {
+    <iframe
+      [src]="safePdfUrl()"
+      style="width: 100%; height: 100%; border: 0"
+    ></iframe>
+    } } }
   </div>
   <!-- Footer Component -->
 </main>

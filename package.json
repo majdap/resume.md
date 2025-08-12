@@ -7,6 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "postinstall": "puppeteer browsers install chrome",
     "serve:ssr:cv-editor": "node dist/cv-editor/server/server.mjs"
   },
   "prettier": {
@@ -30,6 +31,7 @@
     "@angular/router": "^20.1.0",
     "@angular/ssr": "^20.1.4",
     "express": "^5.1.0",
+    "puppeteer": "^24.16.1",
     "markdown-it": "^14.1.0",
     "markdown-it-mark": "^4.0.0",
     "rxjs": "~7.8.0",
