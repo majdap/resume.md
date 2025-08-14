@@ -1,9 +1,15 @@
 import {
-  Component,
-  computed,
-  inject,
-  input,
-  SecurityContext,
+	Component,
+	computed,
+	effect,
+	ElementRef,
+	HostListener,
+	inject,
+	input,
+	output,
+	Renderer2,
+	SecurityContext,
+	signal,
 } from '@angular/core';
 import markdownit from 'markdown-it';
 import mdMark from 'markdown-it-mark';
@@ -11,18 +17,54 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ContentSection } from '../../../types/content-section.type';
 
 @Component({
-  selector: 'app-display-content-section',
-  imports: [],
-  templateUrl: './display-content-section.html',
-  styleUrl: './display-content-section.css',
+	selector: 'app-display-content-section',
+	imports: [],
+	templateUrl: './display-content-section.html',
+	styleUrl: './display-content-section.css',
 })
 export class DisplayContentSection {
-  readonly section = input.required<ContentSection>();
+	private readonly elementRef = inject(ElementRef);
+	private readonly renderer = inject(Renderer2);
 
-  private readonly domSanitizer = inject(DomSanitizer);
-  private readonly md = markdownit().use(mdMark);
-  readonly htmlContent = computed(() => {
-    const sectionHTML: string = this.md.render(this.section().content);
-    return this.domSanitizer.sanitize(SecurityContext.HTML, sectionHTML) || '';
-  });
+	readonly section = input.required<ContentSection>();
+	readonly sectionHovered = output<string>();
+
+	private readonly domSanitizer = inject(DomSanitizer);
+	private readonly md = markdownit().use(mdMark);
+
+	readonly htmlContent = computed(() => {
+		const sectionHTML: string = this.md.render(this.section().content);
+		return (
+			this.domSanitizer.sanitize(SecurityContext.HTML, sectionHTML) || ''
+		);
+	});
+	private styleElement: HTMLStyleElement | null = null;
+
+	constructor() {
+		effect(() => {
+			console.log('style before sanitize: ', this.section().styling);
+			const styling = this.domSanitizer.sanitize(
+				SecurityContext.STYLE,
+				this.section().styling || ''
+			);
+			console.log('style after sanitize: ', styling);
+
+			if (!this.styleElement) {
+				// Create the style element once
+				this.styleElement = this.renderer.createElement('style');
+				this.renderer.appendChild(
+					this.elementRef.nativeElement,
+					this.styleElement
+				);
+			}
+
+			// Update the style content - we know styleElement is not null here
+			if (this.styleElement) {
+				this.styleElement.textContent = `.content-section-${
+					this.section().id
+				} { ${styling} }`;
+				console.log('Applied styling:', styling);
+			}
+		});
+	}
 }

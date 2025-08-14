@@ -1,3 +1,15 @@
-<form [formGroup]="contentForm">
-    <textarea formControlName="content"></textarea>
+<form [class.hidden]="!showContent()" [formGroup]="contentForm">
+	<label for="content">Content</label>
+	<textarea formControlName="content"></textarea>
 </form>
+
+<form [class.hidden]="showContent()" [formGroup]="styleForm">
+	<label for="styling">Styling</label>
+	<textarea formControlName="styling"></textarea>
+</form>
+
+<button (click)="showContent.set(!showContent())">
+	Toggle Content/Styling
+</button>
+
+<button (click)="removeSection()">Delete Section</button>

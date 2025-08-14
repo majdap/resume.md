@@ -8,97 +8,120 @@
 */
 
 :host {
-  /* A4 physical page size expressed in px for cross-browser identical wrapping */
-  --cv-page-width: 794px; /* 210mm ≈ 793.7px */
-  --cv-page-height: 1123px; /* 297mm ≈ 1122.5px */
-  --cv-page-padding: 45px; /* ~12mm, use integer px */
-  width: var(--cv-page-width);
-  min-height: var(--cv-page-height);
-  box-sizing: border-box;
+	/* A4 physical page size expressed in px for cross-browser identical wrapping */
+	--cv-page-width: 794px; /* 210mm ≈ 793.7px */
+	--cv-page-height: 1123px; /* 297mm ≈ 1122.5px */
+	--cv-page-padding: 45px; /* ~12mm, use integer px */
+	width: var(--cv-page-width);
+	min-height: var(--cv-page-height);
+	box-sizing: border-box;
 
-  display: block;
-  margin: 0 auto; /* center in preview column */
-  padding: var(--cv-page-padding); /* printable margin inside page */
+	display: block;
+	margin: 0 auto; /* center in preview column */
+	padding: var(--cv-page-padding); /* printable margin inside page */
 
-  background: #fff;
-  border: 1px solid var(--color-primary-dark);
-  border-radius: var(--radius-s);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	background: #fff;
+	border: 1px solid var(--color-primary-dark);
+	border-radius: var(--radius-s);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
-  position: relative;
-  overflow: visible;
+	position: relative;
+	overflow: visible;
 
-  /* Lock type scale inside page (11pt ≈ 14.6667px) */
-  font-size: 14.6667px; /* base body size */
-  line-height: 1.35;
-  /* Override fluid clamp() values locally to fixed px to avoid viewport-based shifts (esp. Firefox print) */
-  --size-step--2: 9px;
-  --size-step--1: 11px;
-  --size-step-0: 13px;
-  --size-step-1: 14.6667px;
-  --size-step-2: 16px;
-  --size-step-3: 18px;
-  --size-step-4: 22px;
-  --size-step-5: 27px;
-  --size-step-6: 32px;
-  font-variant-ligatures: none;
-  font-synthesis: none; /* prevent synthetic bold/italic affecting metrics */
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  letter-spacing: 0;
-  word-spacing: 0;
-  word-break: normal;
-  overflow-wrap: break-word;
-  hyphens: manual;
-  font-kerning: none;
-  font-feature-settings: "kern" 0, "liga" 0, "clig" 0, "calt" 0;
-  font-variant-ligatures: none;
-  letter-spacing: normal;
-  word-spacing: 0;
-  font-synthesis: none;
+	/* Lock type scale inside page (11pt ≈ 14.6667px) */
+	font-size: 14.6667px; /* base body size */
+	line-height: 1.35;
+	/* Override fluid clamp() values locally to fixed px to avoid viewport-based shifts (esp. Firefox print) */
+	--size-step--2: 9px;
+	--size-step--1: 11px;
+	--size-step-0: 13px;
+	--size-step-1: 14.6667px;
+	--size-step-2: 16px;
+	--size-step-3: 18px;
+	--size-step-4: 22px;
+	--size-step-5: 27px;
+	--size-step-6: 32px;
+	font-variant-ligatures: none;
+	font-synthesis: none; /* prevent synthetic bold/italic affecting metrics */
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
+	letter-spacing: 0;
+	word-spacing: 0;
+	word-break: normal;
+	overflow-wrap: break-word;
+	hyphens: manual;
+	font-kerning: none;
+	font-feature-settings: "kern" 0, "liga" 0, "clig" 0, "calt" 0;
+	font-variant-ligatures: none;
+	letter-spacing: normal;
+	word-spacing: 0;
+	font-synthesis: none;
 }
 
 /* Fixed heading sizes (prevent fluid vw shifts between preview & print) */
 :host h1 {
-  font-size: 26.6667px;
-  line-height: 1.15;
+	font-size: var(--size-step-4);
+	line-height: 1.15;
 }
 :host h2 {
-  font-size: 21.3333px;
-  line-height: 1.2;
+	font-size: var(--size-step-3);
+	line-height: 1.2;
 }
 :host h3 {
-  font-size: 17.3333px;
-  line-height: 1.25;
+	font-size: var(--size-step-2);
+	line-height: 1.25;
 }
 :host h4 {
-  font-size: 14.6667px;
-  line-height: 1.3;
+	font-size: var(--size-step-1);
+	line-height: 1.3;
 }
 
 /* Optional: Avoid breaking mid-section */
 :host > * {
-  page-break-inside: avoid;
+	page-break-inside: avoid;
+}
+
+.edit-btn {
+	position: absolute;
+
+	left: 10px; /* Position within the padding area */
+	z-index: 100;
+	cursor: pointer;
+	filter: grayscale(10%) brightness(1.2);
+	background: transparent;
+	border: none;
+	font-size: var(--size-step-2);
+
+	/* Initially hidden */
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.2s ease, visibility 0.2s ease;
+
+	/* Keep button visible when hovering the button itself */
+	&.hovered {
+		opacity: 1;
+		visibility: visible;
+	}
 }
 
 /* Print styles */
 @page {
-  size: A4 portrait;
-  margin: 0; /* we handle margins with internal padding */
+	size: A4 portrait;
+	margin: 0; /* we handle margins with internal padding */
 }
 
 @media print {
-  :host {
-    width: var(--cv-page-width) !important;
-    min-height: var(--cv-page-height) !important;
-    padding: var(--cv-page-padding) !important;
-    margin: 0 auto !important;
-    /* Keep border metrics to preserve line length; make invisible if desired */
-    border-color: transparent !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    background: #fff !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
+	:host {
+		width: var(--cv-page-width) !important;
+		min-height: var(--cv-page-height) !important;
+		padding: var(--cv-page-padding) !important;
+		margin: 0 auto !important;
+		/* Keep border metrics to preserve line length; make invisible if desired */
+		border-color: transparent !important;
+		border-radius: 0 !important;
+		box-shadow: none !important;
+		background: #fff !important;
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+	}
 }

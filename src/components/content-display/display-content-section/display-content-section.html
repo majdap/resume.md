@@ -1,2 +1,4 @@
-<button class="edit-btn" aria-label="Edit Section Style (CSS)">✏️</button>
-<div [innerHTML]="htmlContent()"></div>
+<div
+	[class]="`content-section-${section().id}`"
+	[innerHTML]="htmlContent()"
+></div>

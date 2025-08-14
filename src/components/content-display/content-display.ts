@@ -1,36 +1,45 @@
-import { Component, HostBinding, HostListener, inject } from '@angular/core';
+import {
+	Component,
+	HostBinding,
+	HostListener,
+	inject,
+	signal,
+} from '@angular/core';
 import { DisplayContentSection } from './display-content-section/display-content-section';
 import { ContentService } from '../../services/content-service.service';
 
 @Component({
-  selector: 'app-content-display',
-  imports: [DisplayContentSection],
-  templateUrl: './content-display.html',
-  styleUrl: './content-display.css',
+	selector: 'app-content-display',
+	imports: [DisplayContentSection],
+	templateUrl: './content-display.html',
+	styleUrl: './content-display.css',
 })
 export class ContentDisplay {
-  private readonly contentService = inject(ContentService);
-  readonly sections = this.contentService.contentSections;
+	private readonly contentService = inject(ContentService);
 
-  // Attribute toggled to force layout reflow before printing (Firefox line wrap consistency)
-  @HostBinding('attr.data-print-reflow') reflowToggle = false;
+	readonly sections = this.contentService.contentSections;
 
-  @HostListener('window:beforeprint') async handleBeforePrint() {
-    const anyDoc: any = document;
-    if (anyDoc.fonts?.ready) {
-      try {
-        await anyDoc.fonts.ready;
-      } catch {
-        /* ignore */
-      }
-    }
-    // Force style + layout flush
-    this.reflowToggle = !this.reflowToggle;
-    void document.body.offsetHeight; // access to ensure reflow
-  }
+	selectedSectionId = '';
 
-  @HostListener('window:afterprint') handleAfterPrint() {
-    // Reset (not strictly necessary but keeps parity)
-    this.reflowToggle = !this.reflowToggle;
-  }
+	// Attribute toggled to force layout reflow before printing (Firefox line wrap consistency)
+	@HostBinding('attr.data-print-reflow') reflowToggle = false;
+
+	@HostListener('window:beforeprint') async handleBeforePrint() {
+		const anyDoc: any = document;
+		if (anyDoc.fonts?.ready) {
+			try {
+				await anyDoc.fonts.ready;
+			} catch {
+				/* ignore */
+			}
+		}
+		// Force style + layout flush
+		this.reflowToggle = !this.reflowToggle;
+		void document.body.offsetHeight; // access to ensure reflow
+	}
+
+	@HostListener('window:afterprint') handleAfterPrint() {
+		// Reset (not strictly necessary but keeps parity)
+		this.reflowToggle = !this.reflowToggle;
+	}
 }

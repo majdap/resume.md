@@ -44,7 +44,6 @@
         flex-direction: column;
         gap: var(--space-s);
         overflow: auto;
-        padding-right: var(--space-s);
       }
     }
 
@@ -123,4 +122,9 @@
       }
     }
   }
+}
+
+.button-container {
+  display: flex;
+  gap: var(--space-xs);
 }
