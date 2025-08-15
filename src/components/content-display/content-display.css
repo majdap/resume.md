@@ -114,6 +114,7 @@
 	:host {
 		width: var(--cv-page-width) !important;
 		min-height: var(--cv-page-height) !important;
+		height: auto !important; /* Allow content to grow beyond A4 if needed */
 		padding: var(--cv-page-padding) !important;
 		margin: 0 auto !important;
 		/* Keep border metrics to preserve line length; make invisible if desired */
@@ -123,5 +124,14 @@
 		background: #fff !important;
 		-webkit-print-color-adjust: exact;
 		print-color-adjust: exact;
+		page-break-inside: avoid;
+		overflow: visible !important;
+	}
+
+	/* Ensure individual sections can break across pages if needed */
+	:host > * {
+		page-break-inside: auto;
+		orphans: 2;
+		widows: 2;
 	}
 }

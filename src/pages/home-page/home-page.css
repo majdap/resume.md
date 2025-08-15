@@ -1,130 +1,138 @@
 :host {
-  display: block;
-  height: 100vh;
-  width: 100vw;
+	display: block;
+	height: 100vh;
+	width: 100vw;
 
-  main {
-    display: grid;
-    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
-    grid-template-rows: 100%;
-    gap: var(--space-s);
-    height: 100%;
+	main {
+		display: grid;
+		grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+		grid-template-rows: 100%;
+		gap: var(--space-s);
+		height: 100%;
 
-    /* Responsive layout adjustments */
-    @media (max-width: 1024px) {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+		/* Responsive layout adjustments */
+		@media (max-width: 1024px) {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
 
-    @media (max-width: 768px) {
-      grid-template-columns: 1fr;
-      grid-template-rows: minmax(0, 2fr) minmax(0, 3fr);
-      gap: var(--space-xs);
-    }
+		@media (max-width: 768px) {
+			grid-template-columns: 1fr;
+			grid-template-rows: minmax(0, 2fr) minmax(0, 3fr);
+			gap: var(--space-xs);
+		}
 
-    .left-side {
-      padding: var(--space-s);
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      min-height: 0;
-      .browser-warning {
-        background: #fffbe6;
-        border: 1px solid #f0e6a6;
-        color: #6b5e00;
-        padding: 8px 12px;
-        border-radius: 4px;
-        margin-bottom: 8px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
+		.left-side {
+			padding: var(--space-s);
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+			min-height: 0;
+			.browser-warning {
+				background: #fffbe6;
+				border: 1px solid #f0e6a6;
+				color: #6b5e00;
+				padding: 8px 12px;
+				border-radius: 4px;
+				margin-bottom: 8px;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
 
-      .content-sections {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-s);
-        overflow: auto;
-      }
-    }
+			.content-sections {
+				display: flex;
+				flex-direction: column;
+				gap: var(--space-s);
+				overflow: auto;
+			}
+		}
 
-    .right-side {
-      width: 100%;
-      display: flex;
-      justify-content: flex-start; /* Changed from center to allow left scrolling */
-      overflow: auto;
-      align-items: flex-start;
-      padding: var(--space-s);
-      background-color: #e0e0e0; /* Light background to simulate paper environment */
+		.right-side {
+			width: 100%;
+			display: flex;
+			justify-content: flex-start; /* Changed from center to allow left scrolling */
+			overflow: auto;
+			align-items: flex-start;
+			padding: var(--space-s);
+			background-color: #e0e0e0; /* Light background to simulate paper environment */
 
-      /* Center the content when it doesn't overflow */
-      app-content-display {
-        margin: 0 auto;
-        flex-shrink: 0; /* Prevent shrinking when content overflows */
-      }
+			/* Center the content when it doesn't overflow */
+			app-content-display {
+				margin: 0 auto;
+				flex-shrink: 0; /* Prevent shrinking when content overflows */
+			}
 
-      /* Ensure the preview is always centered and scrollable */
-      &::-webkit-scrollbar {
-        width: 8px;
-      }
+			/* Ensure the preview is always centered and scrollable */
+			&::-webkit-scrollbar {
+				width: 8px;
+			}
 
-      &::-webkit-scrollbar-track {
-        background: #f1f1f1;
-      }
+			&::-webkit-scrollbar-track {
+				background: #f1f1f1;
+			}
 
-      &::-webkit-scrollbar-thumb {
-        background: #888;
-        border-radius: 4px;
-      }
+			&::-webkit-scrollbar-thumb {
+				background: #888;
+				border-radius: 4px;
+			}
 
-      &::-webkit-scrollbar-thumb:hover {
-        background: #555;
-      }
-    }
-  }
+			&::-webkit-scrollbar-thumb:hover {
+				background: #555;
+			}
+		}
+	}
 }
 
 /* Print styles - Only show the CV preview when printing */
 @media print {
-  :host {
-    height: auto !important;
-    width: auto !important;
+	:host {
+		height: auto !important;
+		width: auto !important;
 
-    main {
-      display: block !important;
-      grid-template-columns: none !important;
-      grid-template-rows: none !important;
-      gap: 0 !important;
-      height: auto !important;
-      padding: 0 !important;
-      margin: 0 !important;
-    }
+		main {
+			display: block !important;
+			grid-template-columns: none !important;
+			grid-template-rows: none !important;
+			gap: 0 !important;
+			height: auto !important;
+			padding: 0 !important;
+			margin: 0 !important;
+		}
 
-    .left-side {
-      display: none !important; /* Hide the editor side completely */
-    }
+		.left-side {
+			display: none !important; /* Hide the editor side completely */
+		}
 
-    .right-side {
-      display: block !important;
-      width: 100% !important;
-      height: auto !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      background: white !important;
-      overflow: visible !important;
-      display: flex !important;
-      justify-content: center !important;
-      align-items: flex-start !important;
+		.right-side {
+			display: block !important;
+			width: 100% !important;
+			height: auto !important;
+			min-height: auto !important;
+			padding: 0 !important;
+			margin: 0 !important;
+			background: white !important;
+			overflow: visible !important;
+			display: flex !important;
+			justify-content: center !important;
+			align-items: flex-start !important;
 
-      app-content-display {
-        margin: 0 auto !important; /* keep intrinsic A4 width */
-        width: 210mm !important; /* ensure consistency */
-        height: auto !important;
-      }
-    }
-  }
+			app-content-display {
+				margin: 0 auto !important; /* keep intrinsic A4 width */
+				width: 210mm !important; /* ensure consistency */
+				height: auto !important;
+				min-height: auto !important;
+			}
+
+			app-iframe-preview {
+				width: 100% !important;
+				height: auto !important;
+				min-height: 297mm !important;
+			}
+		}
+	}
 }
 
 .button-container {
-  display: flex;
-  gap: var(--space-xs);
+	display: flex;
+	gap: var(--space-xs);
 }
