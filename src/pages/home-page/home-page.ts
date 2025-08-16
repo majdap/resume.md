@@ -8,7 +8,7 @@ import { IframePreview } from '../../components/iframe-preview/iframe-preview';
 
 @Component({
 	selector: 'app-home-page',
-	imports: [ContentSection, Header, ContentDisplay, IframePreview],
+	imports: [ContentSection, Header, IframePreview],
 	templateUrl: './home-page.html',
 	styleUrl: './home-page.css',
 })
@@ -20,7 +20,7 @@ export class HomePage {
 	readonly contentSections = this.contentService.contentSections;
 
 	// Live preview mode: 'dom', 'iframe', or 'pdf'
-	readonly previewMode = signal<'dom' | 'iframe' | 'pdf'>('iframe');
+	readonly previewMode = signal<'iframe' | 'pdf'>('iframe');
 	readonly pdfUrl = signal<string | null>(null);
 	readonly safePdfUrl = signal<SafeResourceUrl | null>(null);
 	readonly showBrowserNote = signal<boolean>(false);
@@ -65,22 +65,6 @@ export class HomePage {
 		}
 	}
 
-	showDomPreview() {
-		this.previewMode.set('dom');
-		const url = this.pdfUrl();
-		if (url) setTimeout(() => URL.revokeObjectURL(url), 0);
-		this.pdfUrl.set(null);
-		this.safePdfUrl.set(null);
-	}
-
-	showIframePreview() {
-		this.previewMode.set('iframe');
-		const url = this.pdfUrl();
-		if (url) setTimeout(() => URL.revokeObjectURL(url), 0);
-		this.pdfUrl.set(null);
-		this.safePdfUrl.set(null);
-	}
-
 	dismissBrowserNote() {
 		this.showBrowserNote.set(false);
 	}
@@ -90,12 +74,13 @@ export class HomePage {
 		if (mode === 'iframe' && this.iframePreview) {
 			// Print the iframe content
 			this.iframePreview.printContent();
-		} else if (mode === 'dom') {
-			// Print the current page (which includes the DOM preview)
-			window.print();
 		} else if (mode === 'pdf') {
 			// For PDF mode, the user can print from the PDF viewer
 			window.print();
 		}
+	}
+
+	livePreview() {
+		this.previewMode.set("iframe");
 	}
 }

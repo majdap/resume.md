@@ -17,7 +17,7 @@
 	box-sizing: border-box;
 
 	display: block;
-	margin: 0 auto; /* center in preview column */
+	margin: 0; /* center in preview column */
 	padding: var(--cv-page-padding); /* printable margin inside page */
 
 	background: #fff;
@@ -114,7 +114,7 @@
 	:host {
 		width: var(--cv-page-width) !important;
 		min-height: var(--cv-page-height) !important;
-		height: auto !important; /* Allow content to grow beyond A4 if needed */
+		height: auto !important;
 		padding: var(--cv-page-padding) !important;
 		margin: 0 auto !important;
 		/* Keep border metrics to preserve line length; make invisible if desired */

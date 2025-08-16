@@ -39,10 +39,7 @@ import { ContentService } from '../../services/content-service.service';
 			.iframe-container {
 				width: 100%;
 				height: 100%;
-				border: 1px solid #ddd;
-				border-radius: 4px;
-				overflow: hidden;
-				background: white;
+				border-radius: var(--radius-m, 4px);
 			}
 
 			iframe {
@@ -50,7 +47,6 @@ import { ContentService } from '../../services/content-service.service';
 				width: 100%;
 				height: 100%;
 				border: none;
-				background: white;
 			}
 
 			/* Print styles - hide iframe chrome and let content flow naturally */
@@ -67,7 +63,7 @@ import { ContentService } from '../../services/content-service.service';
 					border-radius: 0 !important;
 					overflow: visible !important;
 					height: auto !important;
-					min-height: 297mm !important;
+					min-height: 296mm !important;
 				}
 
 				iframe {
@@ -131,42 +127,7 @@ export class IframePreview implements OnInit, AfterViewInit, OnChanges {
 				this.iframeLoaded = true;
 				// Send initial content
 				this.sendContentUpdate(this.contentService.contentSections());
-				// Adjust iframe height after content loads
-				this.adjustIframeHeight();
 			});
-		}
-	}
-
-	private adjustIframeHeight() {
-		if (!this.iframe?.nativeElement?.contentWindow) return;
-
-		try {
-			const iframe = this.iframe.nativeElement;
-			const contentWindow = iframe.contentWindow;
-			if (!contentWindow) return;
-
-			const doc = iframe.contentDocument || contentWindow.document;
-			if (!doc) return;
-
-			const body = doc.body;
-			const html = doc.documentElement;
-
-			if (!body || !html) return;
-
-			// Get the actual content height
-			const height = Math.max(
-				body.scrollHeight,
-				body.offsetHeight,
-				html.clientHeight,
-				html.scrollHeight,
-				html.offsetHeight
-			);
-
-			// Set iframe height to content height (but minimum A4 height)
-			const minHeight = 1123; // A4 height in pixels
-			iframe.style.height = Math.max(height + 50, minHeight) + 'px';
-		} catch (error) {
-			console.warn('Failed to adjust iframe height:', error);
 		}
 	}
 
@@ -183,7 +144,6 @@ export class IframePreview implements OnInit, AfterViewInit, OnChanges {
 			);
 
 			// Adjust iframe height after content update
-			setTimeout(() => this.adjustIframeHeight(), 100);
 		} catch (error) {
 			console.warn('Failed to send content update to iframe:', error);
 		}

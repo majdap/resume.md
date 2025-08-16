@@ -13,6 +13,11 @@
 			</button>
 		</div>
 		}
+		<div class="button-container">
+			<button (click)="exportPdf()">Export PDF</button>
+			<button (click)="printPreview()">Print Preview</button>
+			<button (click)="livePreview()">Live Preview</button>
+		</div>
 		<div class="content-sections">
 			@for (section of contentSections(); track section.id) {
 			<app-content-section
@@ -23,29 +28,13 @@
 			}
 			<div class="button-container">
 				<button (click)="addSection()">Add New Content Section</button>
-				<button (click)="exportPdf()">Export PDF</button>
-				<button (click)="printPreview()">Print Preview</button>
-				<button
-					(click)="showDomPreview()"
-					[disabled]="previewMode() === 'dom'"
-				>
-					Show DOM Preview
-				</button>
-				<button
-					(click)="showIframePreview()"
-					[disabled]="previewMode() === 'iframe'"
-				>
-					Show Iframe Preview (Safe)
-				</button>
-			</div>
+							</div>
 		</div>
 	</div>
 	<div class="right-side">
 		<!-- In future we will have option to display more pages not single display -->
-		@switch (previewMode()) { @case ('dom') { @for (page of [0]; track page)
-		{
-		<app-content-display></app-content-display>
-		} } @case ('iframe') {
+		@switch (previewMode()) {
+		  @case ('iframe') {
 		<app-iframe-preview></app-iframe-preview>
 		} @case ('pdf') { @if (safePdfUrl()) {
 		<iframe
