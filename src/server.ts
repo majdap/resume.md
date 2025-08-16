@@ -7,6 +7,8 @@ import {
 import express from 'express';
 import { join } from 'node:path';
 import puppeteer, { Browser } from 'puppeteer';
+import markdownit from 'markdown-it';
+import mdMark from 'markdown-it-mark';
 
 // Serve built browser assets (Angular outputs them under ../browser relative to server bundle)
 const browserDistFolder = join(import.meta.dirname, '../browser');
@@ -14,6 +16,9 @@ const browserDistFolder = join(import.meta.dirname, '../browser');
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 let sharedBrowser: Browser | null = null;
+
+// Initialize markdown processor for server-side conversion
+const md = markdownit().use(mdMark);
 
 async function getBrowser() {
   if (sharedBrowser && sharedBrowser.isConnected()) return sharedBrowser;
@@ -36,7 +41,7 @@ app.post(
   async (req, res, next) => {
     try {
       const { sections } = req.body as {
-        sections: Array<{ id: string; content: string }>;
+        sections: Array<{ id: string; content: string; styling?: string }>;
       };
       const port = process.env['PORT'] || 4000;
       const baseUrl =
@@ -57,16 +62,22 @@ app.post(
       await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
       await page.emulateMediaType('print');
 
+      // Convert markdown content to HTML on server-side for reliable PDF rendering
+      const sectionsWithHtml = sections.map(section => ({
+        ...section,
+        content: md.render(section.content || '')
+      }));
+
       // Inject content sections into the app via localStorage and trigger a refresh
       await page.evaluate(
-        (payload: { sections: Array<{ id: string; content: string }> }) => {
-          // Store raw markdown sections; the app will render markdown to HTML client-side
+        (payload: { sections: Array<{ id: string; content: string; styling?: string }> }) => {
+          // Store HTML-converted sections; already processed on server-side
           localStorage.setItem(
             'cv_sections',
             JSON.stringify(payload.sections || [])
           );
         },
-        { sections }
+        { sections: sectionsWithHtml }
       );
 
       // Reload to let app read localStorage on start

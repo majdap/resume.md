@@ -33,10 +33,20 @@ export class DisplayContentSection {
 	private readonly md = markdownit().use(mdMark);
 
 	readonly htmlContent = computed(() => {
-		const sectionHTML: string = this.md.render(this.section().content);
-		return (
-			this.domSanitizer.sanitize(SecurityContext.HTML, sectionHTML) || ''
-		);
+		const content = this.section().content;
+		// Check if content is already HTML (contains HTML tags) or needs markdown processing
+		if (content.includes('<') && content.includes('>')) {
+			// Already HTML, just sanitize
+			return (
+				this.domSanitizer.sanitize(SecurityContext.HTML, content) || ''
+			);
+		} else {
+			// Needs markdown processing
+			const sectionHTML: string = this.md.render(content);
+			return (
+				this.domSanitizer.sanitize(SecurityContext.HTML, sectionHTML) || ''
+			);
+		}
 	});
 	private styleElement: HTMLStyleElement | null = null;
 
