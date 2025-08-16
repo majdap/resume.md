@@ -24,7 +24,10 @@ export class ContentDisplay implements OnInit {
 
 	ngOnInit() {
 		// Signal that iframe is ready to receive content updates
-		window.parent.postMessage({ type: 'IFRAME_READY' }, '*');
+		// Only do this in browser environment
+		if (typeof window !== 'undefined') {
+			window.parent.postMessage({ type: 'IFRAME_READY' }, '*');
+		}
 	}
 
 	@HostListener('window:message', ['$event'])
