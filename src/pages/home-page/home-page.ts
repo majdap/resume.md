@@ -1,32 +1,46 @@
-import { Component, computed, inject, signal, ViewChild } from '@angular/core';
+import { Component, computed, ElementRef, inject, signal, ViewChild, Renderer2, effect, DestroyRef } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ContentService } from '../../services/content-service.service';
 import { ContentSection } from '../../components/content-section/content-section';
 import { Header } from '../../components/header/header';
-import { ContentDisplay } from '../../components/content-display/content-display';
 import { IframePreview } from '../../components/iframe-preview/iframe-preview';
-
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { defaultStyling } from './default-styling';
+import { debounceTime } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 @Component({
 	selector: 'app-home-page',
-	imports: [ContentSection, Header, IframePreview],
+	imports: [ContentSection, Header, IframePreview, ReactiveFormsModule],
 	templateUrl: './home-page.html',
 	styleUrl: './home-page.css',
 })
 export class HomePage {
 	@ViewChild(IframePreview) iframePreview?: IframePreview;
+	private readonly formBuilder = inject(FormBuilder);
+	private readonly contentService = inject(ContentService);
+	private readonly domSanitizer = inject(DomSanitizer);
+	private readonly destroyRef = inject(DestroyRef);
 
-	private contentService = inject(ContentService);
-	private sanitizer = inject(DomSanitizer);
 	readonly contentSections = this.contentService.contentSections;
-
-	// Live preview mode: 'dom', 'iframe', or 'pdf'
 	readonly previewMode = signal<'iframe' | 'pdf'>('iframe');
 	readonly pdfUrl = signal<string | null>(null);
 	readonly safePdfUrl = signal<SafeResourceUrl | null>(null);
 	readonly showBrowserNote = signal<boolean>(false);
-
+	readonly globalStylesVisible = signal(false);
 	addSection() {
 		this.contentService.createContentSection();
+	}
+
+
+	globalStyleForm!: FormGroup<{
+		globalStyling: FormControl<string>;
+	}>
+
+	createGlobalStylingForm() {
+		this.globalStyleForm = this.formBuilder.nonNullable.group({
+			// defaultStyling will be the default page styling for the document
+			globalStyling: new FormControl<string>(defaultStyling ?? '', { nonNullable: true })
+		})
 	}
 
 	constructor() {
@@ -40,6 +54,17 @@ export class HomePage {
 		);
 		const isFirefox = /Firefox/i.test(nav?.userAgent || '');
 		this.showBrowserNote.set(!isChromium || isFirefox);
+		this.createGlobalStylingForm();
+	}
+
+	ngOnInit() {
+		this.globalStyleForm.valueChanges.pipe(
+			debounceTime(500),
+			takeUntilDestroyed(this.destroyRef)
+		).subscribe((value) => {
+			console.log("GLOBAL STYLES UPDATE IN HOME PAGE, ", value);
+			this.contentService.updateGlobalStyling(value.globalStyling!);
+		})
 	}
 
 	async exportPdf() {
@@ -56,13 +81,17 @@ export class HomePage {
 			// Show inline if requested
 			this.pdfUrl.set(url);
 			this.safePdfUrl.set(
-				this.sanitizer.bypassSecurityTrustResourceUrl(url)
+				this.domSanitizer.bypassSecurityTrustResourceUrl(url)
 			);
 			this.previewMode.set('pdf');
 		} catch (e) {
 			console.error(e);
 			alert('PDF export failed.');
 		}
+	}
+
+	showGlobalStyles() {
+		this.globalStylesVisible.set(false);
 	}
 
 	dismissBrowserNote() {

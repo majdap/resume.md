@@ -94,9 +94,10 @@ export class IframePreview implements OnInit, AfterViewInit, OnChanges {
 		// Watch for content changes and send updates via postMessage
 		effect(() => {
 			const sections = this.contentService.contentSections();
+			const globalStyle = this.contentService.globalStyle();
 			// Only send updates if iframe is loaded
 			if (this.iframeLoaded && this.iframe?.nativeElement) {
-				this.sendContentUpdate(sections);
+				this.sendContentUpdate(sections, globalStyle);
 			}
 		});
 	}
@@ -106,7 +107,7 @@ export class IframePreview implements OnInit, AfterViewInit, OnChanges {
 		if (event.data?.type === 'IFRAME_READY') {
 			this.iframeLoaded = true;
 			// Send initial content
-			this.sendContentUpdate(this.contentService.contentSections());
+			this.sendContentUpdate(this.contentService.contentSections(), this.contentService.globalStyle());
 		}
 	}
 
@@ -126,12 +127,12 @@ export class IframePreview implements OnInit, AfterViewInit, OnChanges {
 			this.iframe.nativeElement.addEventListener('load', () => {
 				this.iframeLoaded = true;
 				// Send initial content
-				this.sendContentUpdate(this.contentService.contentSections());
+				this.sendContentUpdate(this.contentService.contentSections(), this.contentService.globalStyle());
 			});
 		}
 	}
 
-	private sendContentUpdate(sections: any[]) {
+	private sendContentUpdate(sections: any[], globalStyle: any) {
 		if (!this.iframe?.nativeElement?.contentWindow) return;
 
 		try {
@@ -139,6 +140,7 @@ export class IframePreview implements OnInit, AfterViewInit, OnChanges {
 				{
 					type: 'CONTENT_UPDATE',
 					sections: sections,
+					globalStyle: globalStyle
 				},
 				'*' // In production, replace with specific origin
 			);

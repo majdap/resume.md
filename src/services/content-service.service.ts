@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 })
 export class ContentService {
 	contentSections = signal<ContentSection[]>([]);
-
+	globalStyle = signal('');
 	constructor() {
 		// Load initial state from localStorage (if any)
 		try {
@@ -21,7 +21,7 @@ export class ContentService {
 				const parsed: ContentSection[] = JSON.parse(raw);
 				this.contentSections.set(parsed);
 			}
-		} catch {}
+		} catch { }
 
 		// Persist on changes
 		effect(() => {
@@ -31,7 +31,7 @@ export class ContentService {
 					'cv_sections',
 					JSON.stringify(sections)
 				);
-			} catch {}
+			} catch { }
 		});
 	}
 
@@ -63,5 +63,10 @@ export class ContentService {
 					: section
 			)
 		);
+	}
+
+	updateGlobalStyling(updatedGlobalStyle: string) {
+		console.log("updated new styles in the service: ", updatedGlobalStyle)
+		this.globalStyle.set(updatedGlobalStyle);
 	}
 }

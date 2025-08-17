@@ -5,22 +5,53 @@ import {
 	inject,
 	signal,
 	OnInit,
+	Renderer2,
+	effect,
+	SecurityContext,
+	ElementRef,
 } from '@angular/core';
 import { DisplayContentSection } from './display-content-section/display-content-section';
 import { ContentService } from '../../services/content-service.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
 	selector: 'app-content-display',
 	imports: [DisplayContentSection],
 	templateUrl: './content-display.html',
 	styleUrl: './content-display.css',
+	host: { "class": "document" }
 })
 export class ContentDisplay implements OnInit {
 	private readonly contentService = inject(ContentService);
-
+	private readonly renderer2 = inject(Renderer2);
+	private readonly elementRef = inject(ElementRef);
+	private readonly domSanitizer = inject(DomSanitizer);
 	readonly sections = this.contentService.contentSections;
-
+	private styleElement: HTMLStyleElement | null = null;
 	selectedSectionId = '';
+
+	constructor() {
+		// for some reason, this doesn't detect changes on globalStyle() and only runs once
+		effect(() => {
+			const updatedStyling = this.contentService.globalStyle();
+			const globalStyling = this.domSanitizer.sanitize(SecurityContext.STYLE, updatedStyling);
+			console.log("updating global style: ", globalStyling);
+			if (!this.styleElement) {
+				// Create the style element once
+				this.styleElement = this.renderer2.createElement('style');
+				this.renderer2.appendChild(
+					this.elementRef.nativeElement,
+					this.styleElement
+				);
+			}
+
+			// Update the style content - we know styleElement is not null here
+			if (this.styleElement) {
+				this.styleElement.textContent = `.document { ${globalStyling} }`;
+				console.log('Applied styling:', globalStyling);
+			}
+		})
+	}
 
 	ngOnInit() {
 		// Signal that iframe is ready to receive content updates
@@ -32,6 +63,7 @@ export class ContentDisplay implements OnInit {
 		if (event.data?.type === 'CONTENT_UPDATE') {
 			// Update the content service with new sections
 			this.contentService.contentSections.set(event.data.sections);
+			this.contentService.updateGlobalStyling(event.data.globalStyle)
 		}
 	}
 
