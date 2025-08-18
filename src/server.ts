@@ -12,7 +12,7 @@ import puppeteer, { Browser } from 'puppeteer';
 import markdownit from 'markdown-it';
 import mdMark from 'markdown-it-mark';
 
-const md = markdownit().use(mdMark);
+const md = markdownit({ html: true }).use(mdMark);
 // Serve built browser assets (Angular outputs them under ../browser relative to server bundle)
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
@@ -40,10 +40,12 @@ app.post(
 	express.json({ limit: '1mb' }),
 	async (req, res, next) => {
 		try {
-			const { sections } = req.body as {
-				sections: Array<{ id: string; content: string }>;
+			const { globalStyles, sections } = req.body as {
+				globalStyles: string,
+				sections: Array<{ id: string; content: string; styling: string }>;
 			};
 			console.log('sections: ', sections);
+			console.log('globalStyles: ', globalStyles);
 			const port = process.env['PORT'] || 4000;
 			const baseUrl =
 				process.env['PUBLIC_BASE_URL'] || `http://localhost:${port}`;
@@ -69,26 +71,54 @@ app.post(
 				...section,
 				content: md.render(section.content),
 			}));
+			console.log('processedSections: ', processedSections);
 
 			// Inject content sections into the app by directly manipulating the DOM
 			await page.evaluate(
 				(payload: {
-					sections: Array<{ id: string; content: string }>;
+					sections: Array<{ id: string; content: string; styling: string }>;
+					globalStyles: string;
 				}) => {
+					console.log("before target eval")
 					const target = document.querySelector(
 						'app-content-display'
 					);
 					if (target) {
-						target.innerHTML = payload.sections
+						console.log('hello')
+						const sectionsHtml = payload.sections
 							.map(
 								(section) =>
-									`<div class="injected-section">${section.content}</div>`
+									`<div class="injected-section-${section.id}">${section.content}</div><style>.injected-section-${section.id} { ${section.styling} }</style>`
 							)
 							.join('');
+
+						target.innerHTML = `<style>@media print {
+			body {
+				margin: 0 !important; /* keep intrinsic A4 width */
+				width: 210mm !important; /* ensure consistency */
+				height: auto !important;
+				min-height: auto !important;
+			}
+
+			.document-body {
+				width: 100% !important;
+				height: auto !important;
+				min-height: 297mm !important;
+			}
+			@page {
+						margin: 0 !important;
+						padding: 0 !important;
+						}
+
+							}</style><div class="document-body"><style>.document-body { ${payload.globalStyles} }</style>${sectionsHtml}</div>`;
+					}
+					else {
+						console.log("target undefined");
 					}
 				},
-				{ sections: processedSections }
+				{ sections: processedSections, globalStyles }
 			);
+			console.log('goodbye')
 
 			// Wait for the expected number of content sections to render
 			const expected = Array.isArray(sections) ? sections.length : 0;
@@ -115,7 +145,7 @@ app.post(
 							anyDoc.fonts.ready,
 							new Promise((resolve) => setTimeout(resolve, 5000)),
 						]);
-					} catch {}
+					} catch { }
 				}
 			});
 
@@ -127,8 +157,8 @@ app.post(
 			// Prefer CSS sizing (@page) and no default margins
 			const pdf = await page.pdf({
 				printBackground: true,
-				preferCSSPageSize: true,
-				margin: { top: 0, right: 0, bottom: 0, left: 0 },
+				format: 'a4',
+				margin: { top: '0mm', right: '0mm', bottom: '0mm', left: '0mm' },
 			});
 
 			res.setHeader('Content-Type', 'application/pdf');

@@ -4,6 +4,7 @@ import {
 	HostListener,
 	inject,
 	signal,
+	Signal,
 	OnInit,
 	Renderer2,
 	effect,
@@ -27,7 +28,7 @@ export class ContentDisplay implements OnInit {
 	private readonly elementRef = inject(ElementRef);
 	private readonly domSanitizer = inject(DomSanitizer);
 	readonly sections = this.contentService.contentSections;
-	private styleElement: HTMLStyleElement | null = null;
+	private styleElement = signal<HTMLStyleElement | null>(null);
 	selectedSectionId = '';
 
 	constructor() {
@@ -36,20 +37,24 @@ export class ContentDisplay implements OnInit {
 			const updatedStyling = this.contentService.globalStyle();
 			const globalStyling = this.domSanitizer.sanitize(SecurityContext.STYLE, updatedStyling);
 			console.log("updating global style: ", globalStyling);
-			if (!this.styleElement) {
+			if (!this.styleElement()) {
 				// Create the style element once
-				this.styleElement = this.renderer2.createElement('style');
+				this.styleElement.set(this.renderer2.createElement('style'));
 				this.renderer2.appendChild(
 					this.elementRef.nativeElement,
-					this.styleElement
+					this.styleElement()
 				);
 			}
 
 			// Update the style content - we know styleElement is not null here
-			if (this.styleElement) {
-				this.styleElement.textContent = `.document { ${globalStyling} }`;
+			if (this.styleElement()) {
+				this.styleElement()!.textContent = `.document { ${globalStyling} }`;
 				console.log('Applied styling:', globalStyling);
 			}
+		})
+		effect(() => {
+			const contentSections = this.sections();
+			console.log('sections updated: ', contentSections)
 		})
 	}
 
@@ -63,7 +68,7 @@ export class ContentDisplay implements OnInit {
 		if (event.data?.type === 'CONTENT_UPDATE') {
 			// Update the content service with new sections
 			this.contentService.contentSections.set(event.data.sections);
-			this.contentService.updateGlobalStyling(event.data.globalStyle)
+			this.contentService.globalStyle.set(event.data.globalStyle)
 		}
 	}
 

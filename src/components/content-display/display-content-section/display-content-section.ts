@@ -30,7 +30,7 @@ export class DisplayContentSection {
 	readonly sectionHovered = output<string>();
 
 	private readonly domSanitizer = inject(DomSanitizer);
-	private readonly md = markdownit().use(mdMark);
+	private readonly md = markdownit({ html: true }).use(mdMark);
 
 	readonly htmlContent = computed(() => {
 		const sectionHTML: string = this.md.render(this.section().content);
@@ -60,9 +60,8 @@ export class DisplayContentSection {
 
 			// Update the style content - we know styleElement is not null here
 			if (this.styleElement) {
-				this.styleElement.textContent = `.content-section-${
-					this.section().id
-				} { ${styling} }`;
+				this.styleElement.textContent = `.content-section-${this.section().id
+					} { ${styling} }`;
 				console.log('Applied styling:', styling);
 			}
 		});

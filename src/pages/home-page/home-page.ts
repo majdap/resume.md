@@ -58,6 +58,7 @@ export class HomePage {
 	}
 
 	ngOnInit() {
+		this.contentService.updateGlobalStyling(defaultStyling)
 		this.globalStyleForm.valueChanges.pipe(
 			debounceTime(500),
 			takeUntilDestroyed(this.destroyRef)
@@ -69,11 +70,12 @@ export class HomePage {
 
 	async exportPdf() {
 		const sections = this.contentSections();
+		const globalStyles = this.contentService.globalStyle();
 		try {
 			const res = await fetch('/api/export/pdf', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ sections }),
+				body: JSON.stringify({ globalStyles, sections }),
 			});
 			if (!res.ok) throw new Error('Failed to export PDF');
 			const blob = await res.blob();

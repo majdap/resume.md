@@ -9,19 +9,15 @@
 
 :host {
 	/* A4 physical page size expressed in px for cross-browser identical wrapping */
-	--cv-page-width: 794px; /* 210mm ≈ 793.7px */
-	--cv-page-height: 1123px; /* 297mm ≈ 1122.5px */
-	--cv-page-padding: 45px; /* ~12mm, use integer px */
+	--cv-page-width: 793px; /* 210mm ≈ 793.7px */
+	--cv-page-height: 1122px; /* 297mm ≈ 1122.5px */
 	width: var(--cv-page-width);
 	min-height: var(--cv-page-height);
 	box-sizing: border-box;
 
 	display: block;
 	margin: 0; /* center in preview column */
-	padding: var(--cv-page-padding); /* printable margin inside page */
 
-	background: #fff;
-	border: 1px solid var(--color-primary-dark);
 	border-radius: var(--radius-s);
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
@@ -32,6 +28,8 @@
 	font-size: 14.6667px; /* base body size */
 	line-height: 1.35;
 	/* Override fluid clamp() values locally to fixed px to avoid viewport-based shifts (esp. Firefox print) */
+	outline: 2px solid black;
+	background: white;
 	--size-step--2: 9px;
 	--size-step--1: 11px;
 	--size-step-0: 13px;
@@ -56,6 +54,7 @@
 	letter-spacing: normal;
 	word-spacing: 0;
 	font-synthesis: none;
+	scale: 1;
 }
 
 /* Fixed heading sizes (prevent fluid vw shifts between preview & print) */
@@ -81,29 +80,6 @@
 	page-break-inside: avoid;
 }
 
-.edit-btn {
-	position: absolute;
-
-	left: 10px; /* Position within the padding area */
-	z-index: 100;
-	cursor: pointer;
-	filter: grayscale(10%) brightness(1.2);
-	background: transparent;
-	border: none;
-	font-size: var(--size-step-2);
-
-	/* Initially hidden */
-	opacity: 0;
-	visibility: hidden;
-	transition: opacity 0.2s ease, visibility 0.2s ease;
-
-	/* Keep button visible when hovering the button itself */
-	&.hovered {
-		opacity: 1;
-		visibility: visible;
-	}
-}
-
 /* Print styles */
 @page {
 	size: A4 portrait;
@@ -112,20 +88,19 @@
 
 @media print {
 	:host {
-		width: var(--cv-page-width) !important;
+		min-width: var(--cv-page-width) !important;
 		min-height: var(--cv-page-height) !important;
 		height: auto !important;
-		padding: var(--cv-page-padding) !important;
-		margin: 0 auto !important;
+		margin: 0 !important;
 		/* Keep border metrics to preserve line length; make invisible if desired */
-		border-color: transparent !important;
 		border-radius: 0 !important;
 		box-shadow: none !important;
-		background: #fff !important;
 		-webkit-print-color-adjust: exact;
 		print-color-adjust: exact;
 		page-break-inside: avoid;
 		overflow: visible !important;
+		border: none;
+		outline: none;
 	}
 
 	/* Ensure individual sections can break across pages if needed */
