@@ -45,15 +45,18 @@ export class HomePage {
 
 	constructor() {
 		// Simple Chromium detection: presence of (window as any).chrome and not Firefox
-		const nav = navigator as any;
-		const isChromium = !!(
-			nav?.userAgent?.includes('Chrome') ||
-			nav?.userAgentData?.brands?.some((b: any) =>
-				/Chromium|Chrome/i.test(b.brand)
-			)
-		);
-		const isFirefox = /Firefox/i.test(nav?.userAgent || '');
-		this.showBrowserNote.set(!isChromium || isFirefox);
+		// Only check in browser context to avoid SSR errors
+		if (typeof navigator !== 'undefined') {
+			const nav = navigator as any;
+			const isChromium = !!(
+				nav?.userAgent?.includes('Chrome') ||
+				nav?.userAgentData?.brands?.some((b: any) =>
+					/Chromium|Chrome/i.test(b.brand)
+				)
+			);
+			const isFirefox = /Firefox/i.test(nav?.userAgent || '');
+			this.showBrowserNote.set(!isChromium || isFirefox);
+		}
 		this.createGlobalStylingForm();
 	}
 

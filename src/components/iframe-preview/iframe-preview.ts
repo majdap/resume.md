@@ -87,6 +87,8 @@ export class IframePreview implements OnInit, AfterViewInit, OnChanges {
 	private iframeLoaded = false;
 
 	constructor() {
+		console.log(`IframePreview using ContentService instance: ${this.contentService.getInstanceId()}`);
+		
 		// Point to our preview route
 		this.iframeSrc =
 			this.sanitizer.bypassSecurityTrustResourceUrl('/preview');
@@ -95,6 +97,7 @@ export class IframePreview implements OnInit, AfterViewInit, OnChanges {
 		effect(() => {
 			const sections = this.contentService.contentSections();
 			const globalStyle = this.contentService.globalStyle();
+			console.log(`[${this.contentService.getInstanceId()}] Content changed, sending update to iframe`);
 			// Only send updates if iframe is loaded
 			if (this.iframeLoaded && this.iframe?.nativeElement) {
 				this.sendContentUpdate(sections, globalStyle);
@@ -136,6 +139,7 @@ export class IframePreview implements OnInit, AfterViewInit, OnChanges {
 		if (!this.iframe?.nativeElement?.contentWindow) return;
 
 		try {
+			console.log(`[${this.contentService.getInstanceId()}] Sending content update to iframe:`, { sections, globalStyle });
 			this.iframe.nativeElement.contentWindow.postMessage(
 				{
 					type: 'CONTENT_UPDATE',

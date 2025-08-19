@@ -32,11 +32,13 @@ export class ContentDisplay implements OnInit {
 	selectedSectionId = '';
 
 	constructor() {
+		console.log(`ContentDisplay using ContentService instance: ${this.contentService.getInstanceId()}`);
+		
 		// for some reason, this doesn't detect changes on globalStyle() and only runs once
 		effect(() => {
 			const updatedStyling = this.contentService.globalStyle();
 			const globalStyling = this.domSanitizer.sanitize(SecurityContext.STYLE, updatedStyling);
-			console.log("updating global style: ", globalStyling);
+			console.log(`[${this.contentService.getInstanceId()}] updating global style:`, globalStyling);
 			if (!this.styleElement()) {
 				// Create the style element once
 				this.styleElement.set(this.renderer2.createElement('style'));
@@ -49,12 +51,12 @@ export class ContentDisplay implements OnInit {
 			// Update the style content - we know styleElement is not null here
 			if (this.styleElement()) {
 				this.styleElement()!.textContent = `.document { ${globalStyling} }`;
-				console.log('Applied styling:', globalStyling);
+				console.log(`[${this.contentService.getInstanceId()}] Applied styling:`, globalStyling);
 			}
 		})
 		effect(() => {
 			const contentSections = this.sections();
-			console.log('sections updated: ', contentSections)
+			console.log(`[${this.contentService.getInstanceId()}] sections updated:`, contentSections)
 		})
 	}
 
@@ -66,6 +68,7 @@ export class ContentDisplay implements OnInit {
 	@HostListener('window:message', ['$event'])
 	onMessage(event: MessageEvent) {
 		if (event.data?.type === 'CONTENT_UPDATE') {
+			console.log(`[${this.contentService.getInstanceId()}] Received content update:`, event.data);
 			// Update the content service with new sections
 			this.contentService.contentSections.set(event.data.sections);
 			this.contentService.globalStyle.set(event.data.globalStyle)
