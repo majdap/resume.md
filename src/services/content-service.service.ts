@@ -26,12 +26,7 @@ export class ContentService {
 		// Persist on changes
 		effect(() => {
 			const sections = this.contentSections();
-			try {
-				(globalThis as any).localStorage?.setItem(
-					'cv_sections',
-					JSON.stringify(sections)
-				);
-			} catch { }
+			console.log("SERVICE sections udpated: ", sections)
 		});
 	}
 
@@ -68,5 +63,22 @@ export class ContentService {
 	updateGlobalStyling(updatedGlobalStyle: string) {
 		console.log("updated new styles in the service: ", updatedGlobalStyle)
 		this.globalStyle.set(updatedGlobalStyle);
+	}
+
+	updateSectionIndex(oldIndex: number, newIndex: number) {
+		console.log("updating sections in service")
+		this.contentSections.update(currentSections => {
+			// 1. Create a new, mutable copy of the array
+			const newSections = [...currentSections];
+
+			// 2. Remove the element from the old index from the COPY
+			const [movedItem] = newSections.splice(oldIndex, 1);
+
+			// 3. Add the element to the new index in the COPY
+			newSections.splice(newIndex, 0, movedItem);
+
+			// 4. Return the new array. The signal will see a new reference and trigger effects.
+			return newSections;
+		});
 	}
 }

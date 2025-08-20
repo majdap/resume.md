@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ContentService } from '../../services/content-service.service';
+import { ContentUpdateMessage, MessageTypes, SectionMovedMessage } from '../../types/window-message.type';
 
 @Component({
 	selector: 'app-iframe-preview',
@@ -104,12 +105,18 @@ export class IframePreview implements OnInit, AfterViewInit, OnChanges {
 
 	@HostListener('window:message', ['$event'])
 	onMessage(event: MessageEvent) {
-		if (event.data?.type === 'IFRAME_READY') {
+		if (event.data?.type === MessageTypes.IFRAME_READY) {
 			this.iframeLoaded = true;
 			// Send initial content
 			this.sendContentUpdate(this.contentService.contentSections(), this.contentService.globalStyle());
+		} else if (event.data?.type === MessageTypes.SECTION_MOVED) {
+			const { previousIndex, currentIndex } = event.data.sectionMoved;
+			console.log('Section moved');
+			console.log('previousIndex, currentIndex: ', previousIndex, currentIndex);
+			this.contentService.updateSectionIndex(previousIndex, currentIndex)
 		}
 	}
+
 
 	ngOnInit() {
 		// HostListener handles message events
@@ -138,10 +145,12 @@ export class IframePreview implements OnInit, AfterViewInit, OnChanges {
 		try {
 			this.iframe.nativeElement.contentWindow.postMessage(
 				{
-					type: 'CONTENT_UPDATE',
-					sections: sections,
-					globalStyle: globalStyle
-				},
+					type: MessageTypes.CONTENT_UPDATE,
+					content: {
+						sections: sections,
+						globalStyle: globalStyle
+					}
+				} satisfies ContentUpdateMessage,
 				'*' // In production, replace with specific origin
 			);
 

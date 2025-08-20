@@ -13,7 +13,6 @@
 	--size-step-5: clamp(1.5552rem, 1.1673rem + 1.9393vw, 2.6703rem);
 	--size-step-6: clamp(1.8662rem, 1.3544rem + 2.5593vw, 3.3379rem);
 
-	/* @link https://utopia.fyi/space/calculator?c=320,10,1.2,1240,14,1.25,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
 
 	--space-3xs: clamp(0.1875rem, 0.1658rem + 0.1087vw, 0.25rem);
 	--space-2xs: clamp(0.3125rem, 0.269rem + 0.2174vw, 0.4375rem);
@@ -25,7 +24,6 @@
 	--space-2xl: clamp(2.5rem, 2.1522rem + 1.7391vw, 3.5rem);
 	--space-3xl: clamp(3.75rem, 3.2283rem + 2.6087vw, 5.25rem);
 
-	/* One-up pairs */
 	--space-3xs-2xs: clamp(0.1875rem, 0.1005rem + 0.4348vw, 0.4375rem);
 	--space-2xs-xs: clamp(0.3125rem, 0.1821rem + 0.6522vw, 0.6875rem);
 	--space-xs-s: clamp(0.5rem, 0.3696rem + 0.6522vw, 0.875rem);
@@ -35,7 +33,6 @@
 	--space-xl-2xl: clamp(1.875rem, 1.3098rem + 2.8261vw, 3.5rem);
 	--space-2xl-3xl: clamp(2.5rem, 1.5435rem + 4.7826vw, 5.25rem);
 
-	/* Custom pairs */
 	--space-s-l: clamp(0.625rem, 0.2337rem + 1.9565vw, 1.75rem);
 
 	--gutter: var(--space-xl);
@@ -55,7 +52,7 @@
 	--font-bold: 700;
 	--font-medium: 400;
 }
-
+/* Base styles - Shared by preview and main page */
 body {
 	color: var(--color-dark);
 	font-size: var(--size-step-1);
@@ -64,7 +61,9 @@ body {
 	font-size-adjust: from-font;
 	margin: 0;
 }
+/* removing all styles temporarily
 
+some are redundant
 :is(h1, h2, h3, h4) {
 	line-height: var(--leading-fine, 1.1);
 	text-wrap: balance;
@@ -72,7 +71,7 @@ body {
 
 h1 {
 	font-size: var(--size-step-6);
-	/* max-width: 20ch; */
+	max-width: 20ch;
 }
 
 h2 {
@@ -112,7 +111,7 @@ ins {
 	box-decoration-break: clone;
 }
 
-/* This is quite a new property, so we want code styles to at least, not be huge or tiny */
+/* This is quite a new property, so we want code styles to at least, not be huge or tiny
 @supports not (font-size-adjust: from-font) {
 	:is(code, kbd, samp) {
 		font-size: 0.8em;
@@ -167,7 +166,7 @@ ol ::marker {
 	font-weight: var(--font-bold);
 }
 
-/* Lists with classes and roles will be out of standard flow, so remove the default spacing */
+/* Lists with classes and roles will be out of standard flow, so remove the default spacing
 [role="list"][class],
 [role="tablist"][class] {
 	margin-block: 0;
@@ -192,7 +191,7 @@ dd {
 
 blockquote {
 	margin-inline: 0;
-	/* color: var(--color-primary); */
+	/* color: var(--color-primary);
 }
 
 blockquote footer {
@@ -289,7 +288,7 @@ a:not([class]):hover {
 }
 
 /* Firefox is the only browser that doesn't outline the whole element unless you make it display: inline-block. That in itself causes multiple flow issues so we can detect it, using its own vendor prefix and reduce focus offset
-*/
+
 @supports (-moz-appearance: none) {
 	:root {
 		--focus-offset: 0.08em;
@@ -327,7 +326,7 @@ svg[role="img"][width][height] {
 	padding: var(--space-xs);
 }
 
-/* There's a .flow composition, but this prevents forms from having to have that applied where markup is harder to control in certain systems. It still uses the --flow-space variables though to make managing space easier */
+/* There's a .flow composition, but this prevents forms from having to have that applied where markup is harder to control in certain systems. It still uses the --flow-space variables though to make managing space easier
 form > * + * {
 	margin-top: var(--flow-space, 1rem);
 }
@@ -364,7 +363,7 @@ label::after {
 	white-space: pre;
 }
 
-/* Usually label wraps checkbox and radio buttons, so we give ourselves more layout and text-flow control with flex */
+/* Usually label wraps checkbox and radio buttons, so we give ourselves more layout and text-flow control with flex
 label:has(input) {
 	display: flex;
 	align-items: baseline;
@@ -376,7 +375,7 @@ label:has(input) + label:has(input) {
 	--flow-spce: var(--space-s-m);
 }
 
-/* Slightly adjusts the vertical position of the check/radio */
+/* Slightly adjusts the vertical position of the check/radio
 label:has(input) input {
 	transform: translateY(-0.1ex);
 }
@@ -408,6 +407,8 @@ summary {
 details[open] summary {
 	margin-block-end: var(--space-s);
 }
+
+*/
 
 /* CUSTOM STYLES */
 :is(textarea) {

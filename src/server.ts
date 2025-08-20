@@ -128,7 +128,7 @@ app.post(
 						(count) =>
 							document.querySelectorAll('.injected-section')
 								.length === count,
-						{ timeout: 15000 },
+						{ timeout: 5000 },
 						expected
 					);
 				} catch {
@@ -143,7 +143,7 @@ app.post(
 					try {
 						await Promise.race([
 							anyDoc.fonts.ready,
-							new Promise((resolve) => setTimeout(resolve, 5000)),
+							new Promise((resolve) => setTimeout(resolve, 2000)),
 						]);
 					} catch { }
 				}

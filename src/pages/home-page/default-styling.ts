@@ -1,5 +1,7 @@
 export const defaultStyling =
 	`
+padding: 20px;
+
 /* Available Custom Fonts:
 	'Martian Mono' (Default),
 	'Anonymous Pro',

@@ -28,7 +28,6 @@
 	font-size: 14.6667px; /* base body size */
 	line-height: 1.35;
 	/* Override fluid clamp() values locally to fixed px to avoid viewport-based shifts (esp. Firefox print) */
-	outline: 2px solid black;
 	background: white;
 	--size-step--2: 9px;
 	--size-step--1: 11px;

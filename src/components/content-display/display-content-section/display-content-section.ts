@@ -42,12 +42,10 @@ export class DisplayContentSection {
 
 	constructor() {
 		effect(() => {
-			console.log('style before sanitize: ', this.section().styling);
 			const styling = this.domSanitizer.sanitize(
 				SecurityContext.STYLE,
 				this.section().styling || ''
 			);
-			console.log('style after sanitize: ', styling);
 
 			if (!this.styleElement) {
 				// Create the style element once
@@ -62,7 +60,6 @@ export class DisplayContentSection {
 			if (this.styleElement) {
 				this.styleElement.textContent = `.content-section-${this.section().id
 					} { ${styling} }`;
-				console.log('Applied styling:', styling);
 			}
 		});
 	}
