@@ -3,12 +3,16 @@ export const defaultStyling =
 padding: 20px;
 
 
-/* Available Custom Fonts:
-	'Martian Mono' (Default),
+/*
+	Available Custom Fonts:
+	'Martian Mono' (my favourite),
 	'Anonymous Pro',
+	'Open Sans',
+	'Libertinus Serif'
 */
 
 
+/* Font size variables */
 --size-0: 12pt;
 --size-1: 14.333pt;
 --size-2: 16pt;
@@ -20,9 +24,9 @@ h2 { font-size: var(--size-2); }
 h1 { font-size: var(--size-3); }
 
 
-/* add more styles */
+/* add/change whatever styles you want! */
 
-
+font-family: 'Open Sans';
 
 
 `

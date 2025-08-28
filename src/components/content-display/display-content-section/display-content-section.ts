@@ -3,17 +3,15 @@ import {
 	computed,
 	effect,
 	ElementRef,
-	HostListener,
 	inject,
 	input,
 	output,
 	Renderer2,
-	SecurityContext,
-	signal,
+	SecurityContext
 } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import markdownit from 'markdown-it';
 import mdMark from 'markdown-it-mark';
-import { DomSanitizer } from '@angular/platform-browser';
 import { ContentSection } from '../../../types/content-section.type';
 import { MessageTypes } from '../../../types/window-message.type';
 
