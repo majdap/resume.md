@@ -1,13 +1,16 @@
 {
 	"name": "cv-editor",
 	"version": "0.0.0",
+	"engines": {
+		"node": ">=20.19.0"
+	},
 	"scripts": {
 		"ng": "ng",
 		"start": "ng serve",
 		"build": "ng build",
 		"watch": "ng build --watch --configuration development",
 		"test": "ng test",
-		"postinstall": "puppeteer browsers install chrome",
+		"postinstall": "node node_modules/puppeteer/install.js",
 		"serve:ssr:cv-editor": "node dist/cv-editor/server/server.mjs",
 		"server-start": "ng build && node dist/cv-editor/server/server.mjs"
 	},
@@ -32,10 +35,12 @@
 		"@angular/platform-server": "^20.1.0",
 		"@angular/router": "^20.1.0",
 		"@angular/ssr": "^20.1.4",
+		"@types/form-data": "^2.2.1",
 		"express": "^5.1.0",
+		"form-data": "^4.0.4",
 		"markdown-it": "^14.1.0",
 		"markdown-it-mark": "^4.0.0",
-		"puppeteer": "^24.16.1",
+		"puppeteer": "^24.17.0",
 		"rxjs": "~7.8.0",
 		"tslib": "^2.3.0",
 		"uuid": "^11.1.0"

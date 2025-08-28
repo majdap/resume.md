@@ -5,9 +5,8 @@ import {
 	writeResponseToNodeResponse,
 } from '@angular/ssr/node';
 import express from 'express';
-import { promises as fs } from 'node:fs';
 import { join } from 'node:path';
-import puppeteer, { Browser } from 'puppeteer';
+import FormData from 'form-data';
 
 import markdownit from 'markdown-it';
 import mdMark from 'markdown-it-mark';
@@ -18,23 +17,8 @@ const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
-let sharedBrowser: Browser | null = null;
 
-async function getBrowser() {
-	if (sharedBrowser && sharedBrowser.isConnected()) return sharedBrowser;
-	sharedBrowser = await puppeteer.launch({
-		headless: true,
-		args: [
-			'--no-sandbox',
-			'--disable-setuid-sandbox',
-			'--font-render-hinting=none',
-			'--disable-dev-shm-usage',
-		],
-	});
-	return sharedBrowser;
-}
-
-// PDF export endpoint: renders the app's print view and returns a vector PDF
+// PDF export endpoint: renders the app's print view and returns a vector PDF using Gotenberg
 app.post(
 	'/api/export/pdf',
 	express.json({ limit: '1mb' }),
@@ -44,131 +28,124 @@ app.post(
 				globalStyles: string,
 				sections: Array<{ id: string; content: string; styling: string }>;
 			};
-			console.log('sections: ', sections);
-			console.log('globalStyles: ', globalStyles);
-			const port = process.env['PORT'] || 4000;
-			const baseUrl =
-				process.env['PUBLIC_BASE_URL'] || `http://localhost:${port}`;
 
-			const browser = await getBrowser();
-			const page = await browser.newPage();
-			page.setDefaultNavigationTimeout(60000);
-			page.setDefaultTimeout(60000);
-			await page.setViewport({
-				width: 1024,
-				height: 1366,
-				deviceScaleFactor: 2,
-			});
-
-			const url = `${baseUrl}/preview?print=1`;
-			await page.goto(url, {
-				waitUntil: 'networkidle0',
-				timeout: 60000,
-			});
-			await page.emulateMediaType('print');
-
+			// Pre-process content to reduce work in browser
 			const processedSections = sections.map((section) => ({
 				...section,
 				content: md.render(section.content),
 			}));
-			console.log('processedSections: ', processedSections);
 
-			// Inject content sections into the app by directly manipulating the DOM
-			await page.evaluate(
-				(payload: {
-					sections: Array<{ id: string; content: string; styling: string }>;
-					globalStyles: string;
-				}) => {
-					console.log("before target eval")
-					const target = document.querySelector(
-						'app-content-display'
-					);
-					if (target) {
-						console.log('hello')
-						const sectionsHtml = payload.sections
-							.map(
-								(section) =>
-									`<div class="injected-section-${section.id}">${section.content}</div><style>.injected-section-${section.id} { ${section.styling} }</style>`
-							)
-							.join('');
+			// Generate the HTML content for PDF
+			const htmlContent = generatePrintHTML(globalStyles, processedSections);
 
-						target.innerHTML = `<style>@media print {
-			body {
-				margin: 0 !important; /* keep intrinsic A4 width */
-				width: 210mm !important; /* ensure consistency */
-				height: auto !important;
-				min-height: auto !important;
-			}
+			// Send HTML to Gotenberg for PDF conversion
+			const gotenbergUrl = process.env['GOTENBERG_URL'] || 'http://localhost:3000';
+			
+			// Create form data for Gotenberg
+			const form = new FormData();
+			
+			// Add HTML content
+			form.append('files', Buffer.from(htmlContent), {
+				filename: 'index.html',
+				contentType: 'text/html'
+			});
+			
+			// Configure PDF options
+			form.append('marginTop', '0.5');
+			form.append('marginBottom', '0.5');
+			form.append('marginLeft', '0.5');
+			form.append('marginRight', '0.5');
+			form.append('paperWidth', '8.27');
+			form.append('paperHeight', '11.7');
+			form.append('preferCssPageSize', 'false');
+			form.append('printBackground', 'true');
+			form.append('scale', '1');
 
-			.document-body {
-				width: 100% !important;
-				height: auto !important;
-				min-height: 297mm !important;
-			}
-			@page {
-						margin: 0 !important;
-						padding: 0 !important;
-						}
-
-							}</style><div class="document-body"><style>.document-body { ${payload.globalStyles} }</style>${sectionsHtml}</div>`;
-					}
-					else {
-						console.log("target undefined");
-					}
-				},
-				{ sections: processedSections, globalStyles }
-			);
-			console.log('goodbye')
-
-			// Wait for the expected number of content sections to render
-			const expected = Array.isArray(sections) ? sections.length : 0;
-			if (expected > 0) {
-				try {
-					await page.waitForFunction(
-						(count) =>
-							document.querySelectorAll('.injected-section')
-								.length === count,
-						{ timeout: 5000 },
-						expected
-					);
-				} catch {
-					// ignore and continue; PDF can still be generated
-				}
-			}
-
-			// Wait for fonts
-			await page.evaluate(async () => {
-				const anyDoc: any = document;
-				if (anyDoc.fonts?.ready) {
-					try {
-						await Promise.race([
-							anyDoc.fonts.ready,
-							new Promise((resolve) => setTimeout(resolve, 2000)),
-						]);
-					} catch { }
-				}
+			// Send request to Gotenberg
+			const response = await fetch(`${gotenbergUrl}/forms/chromium/convert/html`, {
+				method: 'POST',
+				body: form as any,
+				headers: form.getHeaders(),
 			});
 
-			const html = await page.content();
-			console.log('Rendered HTML:', html);
-			await fs.writeFile('rendered-page.html', html);
-			console.log('Rendered HTML saved to rendered-page.html');
+			if (!response.ok) {
+				throw new Error(`Gotenberg error: ${response.status} ${response.statusText}`);
+			}
 
-			// Prefer CSS sizing (@page) and no default margins
-			const pdf = await page.pdf({
-				printBackground: true,
-				format: 'a4',
-				margin: { top: '0mm', right: '0mm', bottom: '0mm', left: '0mm' },
-			});
-
+			// Stream the PDF response
 			res.setHeader('Content-Type', 'application/pdf');
 			res.setHeader('Content-Disposition', 'inline; filename="cv.pdf"');
-			res.end(pdf);
-		} catch (err) {
-			next(err);
+			
+			const pdfBuffer = await response.arrayBuffer();
+			res.send(Buffer.from(pdfBuffer));
+
+		} catch (error) {
+			console.error('PDF generation error:', error);
+			res.status(500).json({ error: 'Failed to generate PDF' });
 		}
 	}
 );
+
+// Generate HTML content for PDF rendering
+function generatePrintHTML(globalStyles: string, sections: Array<{ id: string; content: string; styling: string }>): string {
+	const sectionHTML = sections.map(section => `
+		<div class="content-section" data-section-id="${section.id}">
+			<style scoped>
+				${section.styling}
+			</style>
+			<div class="section-content">
+				${section.content}
+			</div>
+		</div>
+	`).join('');
+
+	return `
+		<!DOCTYPE html>
+		<html lang="en">
+		<head>
+			<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<title>CV Export</title>
+			<style>
+				/* Global styles */
+				${globalStyles}
+				
+				/* Print-specific styles */
+				@media print {
+					* {
+						-webkit-print-color-adjust: exact !important;
+						color-adjust: exact !important;
+						print-color-adjust: exact !important;
+					}
+				}
+				
+				/* Base print styles */
+				body {
+					margin: 0;
+					padding: 20px;
+					font-family: 'Martian Mono', monospace;
+					font-size: 12pt;
+					line-height: 1.4;
+					color: #000;
+					background: #fff;
+				}
+				
+				.content-section {
+					margin-bottom: 1em;
+					break-inside: avoid;
+				}
+				
+				.section-content {
+					/* Content styling */
+				}
+			</style>
+		</head>
+		<body>
+			${sectionHTML}
+		</body>
+		</html>
+	`;
+}
 
 /**
  * Serve static files from /browser

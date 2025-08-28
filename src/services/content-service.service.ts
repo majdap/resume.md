@@ -10,6 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 })
 export class ContentService {
 	contentSections = signal<ContentSection[]>([]);
+	selectedSection = signal('');
 	globalStyle = signal('');
 	constructor() {
 		// Load initial state from localStorage (if any)
@@ -28,6 +29,11 @@ export class ContentService {
 			const sections = this.contentSections();
 			console.log("SERVICE sections udpated: ", sections)
 		});
+
+		effect(() => {
+			const selectedSection = this.selectedSection();
+			console.log('section selected: ', selectedSection);
+		})
 	}
 
 	createContentSection() {

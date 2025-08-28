@@ -1,22 +1,19 @@
+import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
 import {
 	Component,
+	ElementRef,
 	HostBinding,
 	HostListener,
 	inject,
-	signal,
-	Signal,
 	OnInit,
 	Renderer2,
-	effect,
 	SecurityContext,
-	ElementRef,
+	signal
 } from '@angular/core';
-import { DisplayContentSection } from './display-content-section/display-content-section';
-import { ContentService } from '../../services/content-service.service';
 import { DomSanitizer } from '@angular/platform-browser';
-import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ContentSection } from '../../types/content-section.type';
 import { MessageTypes, SectionMovedMessage } from '../../types/window-message.type';
+import { DisplayContentSection } from './display-content-section/display-content-section';
 @Component({
 	selector: 'app-content-display',
 	imports: [DisplayContentSection, CdkDropList, CdkDrag],
@@ -31,36 +28,7 @@ export class ContentDisplay implements OnInit {
 	readonly globalStyling = signal('');
 	readonly sections = signal<ContentSection[]>([]);
 	private styleElement = signal<HTMLStyleElement | null>(null);
-	selectedSectionId = '';
-
-	// TODO: Reimplement this logic using browser message
-
-	// constructor() {
-	// 	// for some reason, this doesn't detect changes on globalStyle() and only runs once
-	// 	effect(() => {
-	// 		const updatedStyling = this.contentService.globalStyle();
-	// 		const globalStyling = this.domSanitizer.sanitize(SecurityContext.STYLE, updatedStyling);
-	// 		console.log("updating global style: ", globalStyling);
-	// 		if (!this.styleElement()) {
-	// 			// Create the style element once
-	// 			this.styleElement.set(this.renderer2.createElement('style'));
-	// 			this.renderer2.appendChild(
-	// 				this.elementRef.nativeElement,
-	// 				this.styleElement()
-	// 			);
-	// 		}
-	//
-	// 		// Update the style content - we know styleElement is not null here
-	// 		if (this.styleElement()) {
-	// 			this.styleElement()!.textContent = `.document { ${globalStyling} }`;
-	// 			console.log('Applied styling:', globalStyling);
-	// 		}
-	// 	})
-	// 	effect(() => {
-	// 		const contentSections = this.sections();
-	// 		console.log('sections updated: ', contentSections)
-	// 	})
-	// }
+	readonly selectedSectionId = signal('');
 
 	ngOnInit() {
 		// Signal that iframe is ready to receive content updates
@@ -70,9 +38,24 @@ export class ContentDisplay implements OnInit {
 	@HostListener('window:message', ['$event'])
 	onMessage(event: MessageEvent) {
 		if (event.data?.type === 'CONTENT_UPDATE') {
-			const { sections, globalStyle } = event.data.content;
+			const { sections, globalStyle, selectedSection } = event.data.content;
 			this.sections.set(sections);
 			this.globalStyling.set(globalStyle);
+			this.selectedSectionId.set(selectedSection);
+			if (!this.styleElement()) {
+				// Create the style element once
+				this.styleElement.set(this.renderer2.createElement('style'));
+				this.renderer2.appendChild(
+					this.elementRef.nativeElement,
+					this.styleElement()
+				);
+			}
+
+			// Update the style content - we know styleElement is not null here
+			if (this.styleElement()) {
+				this.styleElement()!.textContent = this.domSanitizer.sanitize(SecurityContext.STYLE, `.document { ${this.globalStyling()} }`);
+			}
+
 		}
 	}
 

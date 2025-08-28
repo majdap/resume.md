@@ -96,9 +96,10 @@ export class IframePreview implements OnInit, AfterViewInit, OnChanges {
 		effect(() => {
 			const sections = this.contentService.contentSections();
 			const globalStyle = this.contentService.globalStyle();
+			const selectedSection = this.contentService.selectedSection();
 			// Only send updates if iframe is loaded
 			if (this.iframeLoaded && this.iframe?.nativeElement) {
-				this.sendContentUpdate(sections, globalStyle);
+				this.sendContentUpdate(sections, globalStyle, selectedSection);
 			}
 		});
 	}
@@ -108,12 +109,14 @@ export class IframePreview implements OnInit, AfterViewInit, OnChanges {
 		if (event.data?.type === MessageTypes.IFRAME_READY) {
 			this.iframeLoaded = true;
 			// Send initial content
-			this.sendContentUpdate(this.contentService.contentSections(), this.contentService.globalStyle());
+			this.sendContentUpdate(this.contentService.contentSections(), this.contentService.globalStyle(), this.contentService.selectedSection());
 		} else if (event.data?.type === MessageTypes.SECTION_MOVED) {
 			const { previousIndex, currentIndex } = event.data.sectionMoved;
 			console.log('Section moved');
 			console.log('previousIndex, currentIndex: ', previousIndex, currentIndex);
 			this.contentService.updateSectionIndex(previousIndex, currentIndex)
+		} else if (event.data?.type === MessageTypes.SECTION_SELECTED) {
+			this.contentService.selectedSection.set(event.data.sectionId)
 		}
 	}
 
@@ -134,12 +137,12 @@ export class IframePreview implements OnInit, AfterViewInit, OnChanges {
 			this.iframe.nativeElement.addEventListener('load', () => {
 				this.iframeLoaded = true;
 				// Send initial content
-				this.sendContentUpdate(this.contentService.contentSections(), this.contentService.globalStyle());
+				this.sendContentUpdate(this.contentService.contentSections(), this.contentService.globalStyle(), this.contentService.selectedSection());
 			});
 		}
 	}
 
-	private sendContentUpdate(sections: any[], globalStyle: any) {
+	private sendContentUpdate(sections: any[], globalStyle: any, selectedSection: string) {
 		if (!this.iframe?.nativeElement?.contentWindow) return;
 
 		try {
@@ -148,7 +151,8 @@ export class IframePreview implements OnInit, AfterViewInit, OnChanges {
 					type: MessageTypes.CONTENT_UPDATE,
 					content: {
 						sections: sections,
-						globalStyle: globalStyle
+						globalStyle: globalStyle,
+						selectedSection: selectedSection
 					}
 				} satisfies ContentUpdateMessage,
 				'*' // In production, replace with specific origin

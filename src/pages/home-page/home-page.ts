@@ -15,7 +15,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 	styleUrl: './home-page.css',
 })
 export class HomePage {
-	@ViewChild(IframePreview) iframePreview?: IframePreview;
 	private readonly formBuilder = inject(FormBuilder);
 	private readonly contentService = inject(ContentService);
 	private readonly domSanitizer = inject(DomSanitizer);
@@ -92,24 +91,14 @@ export class HomePage {
 		}
 	}
 
-	showGlobalStyles() {
-		this.globalStylesVisible.set(false);
+	toggleGlobalStyles() {
+		this.globalStylesVisible.set(!this.globalStylesVisible());
 	}
 
 	dismissBrowserNote() {
 		this.showBrowserNote.set(false);
 	}
 
-	printPreview() {
-		const mode = this.previewMode();
-		if (mode === 'iframe' && this.iframePreview) {
-			// Print the iframe content
-			this.iframePreview.printContent();
-		} else if (mode === 'pdf') {
-			// For PDF mode, the user can print from the PDF viewer
-			window.print();
-		}
-	}
 
 	livePreview() {
 		this.previewMode.set("iframe");

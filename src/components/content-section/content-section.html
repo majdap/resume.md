@@ -1,15 +1,23 @@
-<form [class.hidden]="!showContent()" [formGroup]="contentForm">
-	<label for="content">Content</label>
-	<textarea formControlName="content"></textarea>
+<form
+	class="content-form"
+	[class.hidden]="!showContent()"
+	[formGroup]="contentForm"
+>
+	<label class="content-label" for="content">Content</label>
+	<textarea (focus)="sectionSelected()" formControlName="content"></textarea>
 </form>
 
-<form [class.hidden]="showContent()" [formGroup]="styleForm">
-	<label for="styling">Styling</label>
-	<textarea formControlName="styling"></textarea>
+<form class="style-form" [class.hidden]="showContent()" [formGroup]="styleForm">
+	<label class="styling-label" for="styling">Styling</label>
+	<textarea (focus)="sectionSelected()" formControlName="styling"></textarea>
 </form>
 
-<button (click)="showContent.set(!showContent())">
-	Toggle Content/Styling
-</button>
+<div class="section-buttons">
+	<button class="toggle-button" (click)="showContent.set(!showContent())">
+		Toggle Content/Styling
+	</button>
 
-<button (click)="removeSection()">Delete Section</button>
+	<button class="delete-button" (click)="removeSection()">
+		Delete Section ⚠️
+	</button>
+</div>

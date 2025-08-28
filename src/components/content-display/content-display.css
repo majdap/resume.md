@@ -48,12 +48,19 @@
 	overflow-wrap: break-word;
 	hyphens: manual;
 	font-kerning: none;
-	font-feature-settings: "kern" 0, "liga" 0, "clig" 0, "calt" 0;
+	font-feature-settings:
+		"kern" 0,
+		"liga" 0,
+		"clig" 0,
+		"calt" 0;
 	font-variant-ligatures: none;
 	letter-spacing: normal;
 	word-spacing: 0;
 	font-synthesis: none;
 	scale: 1;
+	.selected {
+		outline: 2px solid var(--color-focus-outline);
+	}
 }
 
 /* Fixed heading sizes (prevent fluid vw shifts between preview & print) */
@@ -89,7 +96,6 @@
 	:host {
 		min-width: var(--cv-page-width) !important;
 		min-height: var(--cv-page-height) !important;
-		height: auto !important;
 		margin: 0 !important;
 		/* Keep border metrics to preserve line length; make invisible if desired */
 		border-radius: 0 !important;
@@ -100,6 +106,9 @@
 		overflow: visible !important;
 		border: none;
 		outline: none;
+		.selected {
+			outline: none !important;
+		}
 	}
 
 	/* Ensure individual sections can break across pages if needed */

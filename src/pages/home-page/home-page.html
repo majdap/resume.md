@@ -14,20 +14,20 @@
 		</div>
 		}
 		<div class="button-container">
-			<button (click)="showGlobalStyles()">Edit Global Document Styles</button>
+			<button (click)="toggleGlobalStyles()">{{globalStylesVisible() ? 'Hide' : 'Show'}} Document Styles</button>
 			<button (click)="exportPdf()">Export PDF</button>
-			<button (click)="printPreview()">Print Preview</button>
 			<button (click)="livePreview()">Live Preview</button>
 		</div>
 
 		<!-- Should this be a content-section? Or textarea here, since it exists only once for the whole document -->
 		<!-- I think textarea here is fine, since the content-section component is coupled with the contentService -->
-		<div>
+		@if(globalStylesVisible()) {
+		<div class="global-styles">
 			<form [formGroup]="globalStyleForm">
 				<textarea formControlName="globalStyling">
 				</textarea>
 			</form>
-		</div>
+		</div>}
 		<div class="content-sections">
 			@for (section of contentSections(); track section.id) {
 			<app-content-section

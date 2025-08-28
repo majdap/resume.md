@@ -15,12 +15,16 @@ import markdownit from 'markdown-it';
 import mdMark from 'markdown-it-mark';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ContentSection } from '../../../types/content-section.type';
+import { MessageTypes } from '../../../types/window-message.type';
 
 @Component({
 	selector: 'app-display-content-section',
 	imports: [],
 	templateUrl: './display-content-section.html',
 	styleUrl: './display-content-section.css',
+	host: {
+		'(click)': 'sectionSelected()',
+	}
 })
 export class DisplayContentSection {
 	private readonly elementRef = inject(ElementRef);
@@ -62,5 +66,10 @@ export class DisplayContentSection {
 					} { ${styling} }`;
 			}
 		});
+	}
+
+	sectionSelected() {
+		console.log('selecting section in iframe: ', this.section().id)
+		window.parent.postMessage({ type: MessageTypes.SECTION_SELECTED, sectionId: this.section().id }, '*')
 	}
 }

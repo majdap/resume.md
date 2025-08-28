@@ -5,6 +5,7 @@ export type ContentUpdateMessage = {
 	content: {
 		sections: ContentSection[];
 		globalStyle: string;
+		selectedSection: string;
 	}
 }
 
@@ -19,5 +20,6 @@ export type SectionMovedMessage = {
 export enum MessageTypes {
 	CONTENT_UPDATE = 'CONTENT_UPDATE',
 	IFRAME_READY = 'IFRAME_READ',
-	SECTION_MOVED = 'SECTION_MOVED'
+	SECTION_MOVED = 'SECTION_MOVED',
+	SECTION_SELECTED = 'SECTION_SELECTED'
 }

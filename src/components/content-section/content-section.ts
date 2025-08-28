@@ -1,20 +1,21 @@
 import {
 	Component,
+	computed,
 	DestroyRef,
 	inject,
 	input,
 	OnInit,
 	signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
 	FormBuilder,
 	FormControl,
 	FormGroup,
 	ReactiveFormsModule,
 } from '@angular/forms';
+import { debounceTime } from 'rxjs';
 import { ContentService } from '../../services/content-service.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { debounceTime, merge, tap } from 'rxjs';
 import { ContentSectionProperty } from '../../types/content-section.type';
 
 @Component({
@@ -22,6 +23,9 @@ import { ContentSectionProperty } from '../../types/content-section.type';
 	imports: [ReactiveFormsModule],
 	templateUrl: './content-section.html',
 	styleUrl: './content-section.css',
+	host: {
+		'[class.selected]': 'isSelected()'
+	}
 })
 export class ContentSection implements OnInit {
 	private readonly contentService = inject(ContentService);
@@ -33,6 +37,7 @@ export class ContentSection implements OnInit {
 	readonly styling = input<string>();
 
 	readonly showContent = signal(true);
+	readonly isSelected = computed(() => this.id() === this.contentService.selectedSection())
 
 	contentForm!: FormGroup<{
 		content: FormControl<string>;
@@ -87,5 +92,9 @@ export class ContentSection implements OnInit {
 
 	removeSection() {
 		this.contentService.removeContentSection(this.id());
+	}
+
+	sectionSelected() {
+		this.contentService.selectedSection.set(this.id())
 	}
 }
