@@ -1,0 +1,11 @@
+<button class="print-button" (click)="printContent()">Print 🖨️</button>
+<div class="iframe-container">
+	<iframe
+		#previewFrame
+		[src]="iframeSrc"
+		frameborder="0"
+		sandbox="allow-scripts allow-same-origin allow-modals"
+		title="CV Preview"
+	>
+	</iframe>
+</div>

@@ -91,7 +91,9 @@ export class ContentSection implements OnInit {
 	}
 
 	removeSection() {
-		this.contentService.removeContentSection(this.id());
+		if (window.confirm("Are you sure you want to delete section?")) {
+			this.contentService.removeContentSection(this.id());
+		}
 	}
 
 	sectionSelected() {

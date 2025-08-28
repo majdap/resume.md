@@ -1,11 +1,13 @@
 export const defaultStyling =
-	`
-padding: 20px; // use this for the page margins
+	`/* use this for the page margins */
+padding: 20px;
+
 
 /* Available Custom Fonts:
 	'Martian Mono' (Default),
 	'Anonymous Pro',
 */
+
 
 --size-0: 12pt;
 --size-1: 14.333pt;
@@ -17,7 +19,9 @@ h3 { font-size: var(--size-1); }
 h2 { font-size: var(--size-2); }
 h1 { font-size: var(--size-3); }
 
+
 /* add more styles */
+
 
 
 

@@ -6,7 +6,7 @@
 			<span>
 				Due to differences in font-rendering in browser engines, preview may
 				be inconsistent on non‑Chromium browsers. For best results, use
-				Chrome or export PDF.
+				Chromium based browser.
 			</span>
 			<button (click)="dismissBrowserNote()" style="margin-left: 12px">
 				Dismiss
@@ -15,8 +15,8 @@
 		}
 		<div class="button-container">
 			<button (click)="toggleGlobalStyles()">{{globalStylesVisible() ? 'Hide' : 'Show'}} Document Styles</button>
-			<button (click)="exportPdf()">Export PDF</button>
-			<button (click)="livePreview()">Live Preview</button>
+			<!-- TODO: <button (click)="exportPdf()">Export PDF</button> -->
+			<!-- TODO:  <button (click)="livePreview()">Live Preview</button> -->
 		</div>
 
 		<!-- Should this be a content-section? Or textarea here, since it exists only once for the whole document -->
@@ -37,7 +37,7 @@
 			></app-content-section>
 			}
 			<div class="button-container">
-				<button (click)="addSection()">Add New Content Section</button>
+				<button (click)="addSection()">Add New Content Section ➕</button>
 							</div>
 		</div>
 	</div>

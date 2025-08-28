@@ -1,4 +1,4 @@
-import { Component, computed, ElementRef, inject, signal, ViewChild, Renderer2, effect, DestroyRef } from '@angular/core';
+import { Component, computed, ElementRef, inject, signal, ViewChild, Renderer2, effect, DestroyRef, viewChild } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ContentService } from '../../services/content-service.service';
 import { ContentSection } from '../../components/content-section/content-section';
@@ -15,6 +15,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 	styleUrl: './home-page.css',
 })
 export class HomePage {
+	private readonly iframePreview = viewChild(IframePreview);
 	private readonly formBuilder = inject(FormBuilder);
 	private readonly contentService = inject(ContentService);
 	private readonly domSanitizer = inject(DomSanitizer);
@@ -67,27 +68,32 @@ export class HomePage {
 		})
 	}
 
-	async exportPdf() {
-		const sections = this.contentSections();
-		const globalStyles = this.contentService.globalStyle();
-		try {
-			const res = await fetch('/api/export/pdf', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ globalStyles, sections }),
-			});
-			if (!res.ok) throw new Error('Failed to export PDF');
-			const blob = await res.blob();
-			const url = URL.createObjectURL(blob);
-			// Show inline if requested
-			this.pdfUrl.set(url);
-			this.safePdfUrl.set(
-				this.domSanitizer.bypassSecurityTrustResourceUrl(url)
-			);
-			this.previewMode.set('pdf');
-		} catch (e) {
-			console.error(e);
-			alert('PDF export failed.');
+	exportPdf() {
+		// const sections = this.contentSections();
+		// const globalStyles = this.contentService.globalStyle();
+		// try {
+		// 	const res = await fetch('/api/export/pdf', {
+		// 		method: 'POST',
+		// 		headers: { 'Content-Type': 'application/json' },
+		// 		body: JSON.stringify({ globalStyles, sections }),
+		// 	});
+		// 	if (!res.ok) throw new Error('Failed to export PDF');
+		// 	const blob = await res.blob();
+		// 	const url = URL.createObjectURL(blob);
+		// 	// Show inline if requested
+		// 	this.pdfUrl.set(url);
+		// 	this.safePdfUrl.set(
+		// 		this.domSanitizer.bypassSecurityTrustResourceUrl(url)
+		// 	);
+		// 	this.previewMode.set('pdf');
+		// } catch (e) {
+		// 	console.error(e);
+		// 	alert('PDF export failed.');
+		// }
+		const iframeComponent = this.iframePreview();
+		if (iframeComponent) {
+			console.log('yippee')
+			iframeComponent.printContent();
 		}
 	}
 

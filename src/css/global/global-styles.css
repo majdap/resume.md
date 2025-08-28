@@ -60,6 +60,27 @@ body {
 	font-size-adjust: from-font;
 	margin: 0;
 }
+
+@media print {
+	@page {
+		size: A4;
+	}
+	* {
+		box-sizing: border-box;
+	}
+	html {
+		height: auto;
+		width: auto;
+	}
+	body {
+		height: auto;
+		margin: 0;
+		padding: 0;
+		overflow: visible;
+		scale: 1;
+	}
+}
+
 /* removing all styles temporarily
 
 some are redundant
@@ -419,7 +440,11 @@ button {
 	min-height: 2.5cap;
 	border-radius: var(--radius-s);
 	cursor: pointer;
+	padding: var(--space-2xs) var(--space-xs);
 	&:hover {
-		filter: brightness(0.9);
+		filter: brightness(0.95);
+	}
+	&.dark:hover {
+		filter: brightness(1.1);
 	}
 }

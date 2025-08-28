@@ -94,8 +94,8 @@
 
 @media print {
 	:host {
-		min-width: var(--cv-page-width) !important;
-		min-height: var(--cv-page-height) !important;
+		width: 100%;
+		height: fit-content;
 		margin: 0 !important;
 		/* Keep border metrics to preserve line length; make invisible if desired */
 		border-radius: 0 !important;
@@ -106,8 +106,12 @@
 		overflow: visible !important;
 		border: none;
 		outline: none;
+		/* background: blue; */
 		.selected {
 			outline: none !important;
+		}
+		&:last-child {
+			page-break-after: none;
 		}
 	}
 

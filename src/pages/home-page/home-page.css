@@ -5,7 +5,7 @@
 
 	main {
 		display: grid;
-		grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+		grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
 		grid-template-rows: 100%;
 		gap: var(--space-s);
 		height: 100%;
@@ -60,8 +60,10 @@
 		}
 
 		.right-side {
+			background: green;
 			width: 100%;
 			display: flex;
+			height: 100%;
 			justify-content: flex-start; /* Changed from center to allow left scrolling */
 			overflow: auto;
 			align-items: flex-start;
@@ -90,51 +92,6 @@
 
 			&::-webkit-scrollbar-thumb:hover {
 				background: #555;
-			}
-		}
-	}
-}
-
-/* Print styles - Only show the CV preview when printing */
-@media print {
-	:host {
-		width: auto !important;
-
-		main {
-			display: block !important;
-			grid-template-columns: none !important;
-			grid-template-rows: none !important;
-			gap: 0 !important;
-			padding: 0 !important;
-			margin: 0 !important;
-		}
-
-		.left-side {
-			display: none !important; /* Hide the editor side completely */
-		}
-
-		.right-side {
-			display: block !important;
-			width: 100% !important;
-			height: auto !important;
-			min-height: auto !important;
-			padding: 0 !important;
-			margin: 0 !important;
-			background: white !important;
-			overflow: visible !important;
-			display: flex !important;
-			justify-content: center !important;
-			align-items: flex-start !important;
-
-			app-content-display {
-				margin: 0 auto !important; /* keep intrinsic A4 width */
-				width: 210mm !important; /* ensure consistency */
-				min-height: auto !important;
-			}
-
-			app-iframe-preview {
-				width: 100% !important;
-				min-height: 297mm !important;
 			}
 		}
 	}
