@@ -42,7 +42,8 @@
 							],
 							"outputHashing": "all",
 							"outputPath": "docs",
-							"index": "src/index.html"
+							"index": "src/index.html",
+							"baseHref": "/resume.md/"
 						},
 						"development": {
 							"optimization": false,
