@@ -1,0 +1,66 @@
+name: Deploy Angular (SSR prerender) to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: 20
+  # Set this to the Angular project name from angular.json ("defaultProject" or the key under "projects")
+  PROJECT_NAME: your-project-name
+  # For this repo, use the project pages base-href:
+  BASE_HREF: /resume.md/
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      # Build the browser bundle with correct base-href for GitHub Pages
+      - name: Build browser
+        run: npx ng build --configuration=production --base-href="${{ env.BASE_HREF }}"
+
+      # Prerender your routes to static HTML
+      - name: Prerender routes
+        run: npx ng run ${{ env.PROJECT_NAME }}:prerender --configuration=production
+
+      # Optional: SPA fallback for non-prerendered routes
+      # - name: Add 404 fallback
+      #   run: cp dist/${{ env.PROJECT_NAME }}/browser/index.html dist/${{ env.PROJECT_NAME }}/browser/404.html
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/${{ env.PROJECT_NAME }}/browser
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
