@@ -1,4 +1,4 @@
-name: Deploy Angular (SSR prerender) to GitHub Pages
+name: Deploy Angular (prerender) to GitHub Pages
 
 on:
   push:
@@ -16,9 +16,7 @@ concurrency:
 
 env:
   NODE_VERSION: 20
-  # Set this to the Angular project name from angular.json ("defaultProject" or the key under "projects")
-  PROJECT_NAME: your-project-name
-  # For this repo, use the project pages base-href:
+  PROJECT_NAME: resume.md
   BASE_HREF: /resume.md/
 
 jobs:
@@ -34,20 +32,17 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
 
-      - name: Install deps
+      - name: Install dependencies
         run: npm ci
 
-      # Build the browser bundle with correct base-href for GitHub Pages
-      - name: Build browser
-        run: npx ng build --configuration=production --base-href="${{ env.BASE_HREF }}"
+      - name: Build (production, prerender, correct base-href)
+        run: npx ng build --configuration=production --base-href="${{ env.BASE_HREF }}" --prerender
 
-      # Prerender your routes to static HTML
-      - name: Prerender routes
-        run: npx ng run ${{ env.PROJECT_NAME }}:prerender --configuration=production
+      - name: Add 404 fallback for SPA routing
+        run: cp dist/${{ env.PROJECT_NAME }}/browser/index.csr.html dist/${{ env.PROJECT_NAME }}/browser/404.html
 
-      # Optional: SPA fallback for non-prerendered routes
-      # - name: Add 404 fallback
-      #   run: cp dist/${{ env.PROJECT_NAME }}/browser/index.html dist/${{ env.PROJECT_NAME }}/browser/404.html
+      - name: Create root index.html from CSR version
+        run: cp dist/${{ env.PROJECT_NAME }}/browser/index.csr.html dist/${{ env.PROJECT_NAME }}/browser/index.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
