@@ -13,14 +13,14 @@
 			</button>
 		</div>
 		}
-		<div class="button-container">
+		<div class="button-container repel">
 			<button (click)="toggleGlobalStyles()">{{globalStylesVisible() ? 'Hide' : 'Show'}} Document Styles</button>
+			<button class="print-button" (click)="printContent()">Print 🖨️</button>
 			<!-- TODO: <button (click)="exportPdf()">Export PDF</button> -->
 			<!-- TODO:  <button (click)="livePreview()">Live Preview</button> -->
 		</div>
 
-		<!-- Should this be a content-section? Or textarea here, since it exists only once for the whole document -->
-		<!-- I think textarea here is fine, since the content-section component is coupled with the contentService -->
+
 		@if(globalStylesVisible()) {
 		<div class="global-styles">
 			<form [formGroup]="globalStyleForm">
@@ -37,8 +37,8 @@
 			></app-content-section>
 			}
 			<div class="button-container">
-				<button (click)="addSection()">Add New Content Section ➕</button>
-							</div>
+				<button class="add-button" (click)="addSection()">Add New Section ➕</button>
+			</div>
 		</div>
 	</div>
 	<div class="right-side">

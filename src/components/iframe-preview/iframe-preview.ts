@@ -1,6 +1,7 @@
 import {
 	AfterViewInit,
 	Component,
+	DestroyRef,
 	ElementRef,
 	HostListener,
 	SimpleChanges,
@@ -11,6 +12,7 @@ import {
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ContentService } from '../../services/content-service.service';
 import { ContentUpdateMessage, MessageTypes } from '../../types/window-message.type';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
 	selector: 'app-iframe-preview',
@@ -20,6 +22,7 @@ import { ContentUpdateMessage, MessageTypes } from '../../types/window-message.t
 })
 export class IframePreview implements AfterViewInit {
 	private readonly iframe = viewChild.required<ElementRef<HTMLIFrameElement>>('previewFrame');
+	private readonly destroyRef = inject(DestroyRef);
 
 	private sanitizer = inject(DomSanitizer);
 	private contentService = inject(ContentService);
@@ -42,6 +45,8 @@ export class IframePreview implements AfterViewInit {
 				this.sendContentUpdate(sections, globalStyle, selectedSection);
 			}
 		});
+
+		this.contentService.printSubject.asObservable().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.printContent());
 	}
 
 	@HostListener('window:message', ['$event'])

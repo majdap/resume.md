@@ -97,6 +97,10 @@ export class HomePage {
 		}
 	}
 
+	printContent() {
+		this.contentService.printSubject.next(null);
+	}
+
 	toggleGlobalStyles() {
 		this.globalStylesVisible.set(!this.globalStylesVisible());
 	}

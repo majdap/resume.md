@@ -96,8 +96,70 @@
 		}
 	}
 }
+.print-button {
+	background: dodgerblue;
+	color: white;
+}
+
+.print-button {
+	appearance: button;
+	border: solid transparent;
+	border-radius: var(--radius-m);
+	border-width: 0 0 4px;
+	box-sizing: border-box;
+	color: #ffffff;
+	cursor: pointer;
+	display: inline-block;
+	outline: none;
+	overflow: visible;
+	padding: var(--space-xs) var(--space-s);
+	text-align: center;
+	touch-action: manipulation;
+	transform: translateZ(0);
+	transition: filter 0.2s;
+	user-select: none;
+	-webkit-user-select: none;
+	vertical-align: middle;
+	white-space: nowrap;
+}
+
+.print-button:after {
+	background-clip: padding-box;
+	background-color: #1cb0f6;
+	border: solid transparent;
+	border-radius: var(--radius-m);
+	border-width: 0 0 4px;
+	bottom: -4px;
+	content: "";
+	left: 0;
+	position: absolute;
+	right: 0;
+	top: 0;
+	z-index: -1;
+}
+
+.print-button:hover:not(:disabled) {
+	filter: brightness(1.1);
+	-webkit-filter: brightness(1.1);
+}
+
+.print-button:disabled {
+	cursor: auto;
+}
+
+.print-button:active {
+	border-width: 4px 0 0;
+	background: none;
+}
 
 .button-container {
 	display: flex;
 	gap: var(--space-xs);
+	.add-button {
+		background: var(--color-primary-green);
+		border-color: transparent;
+		&:active {
+			border-color: var(--color-primary-green-dark);
+		}
+	}
 }

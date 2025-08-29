@@ -447,4 +447,13 @@ button {
 	&.dark:hover {
 		filter: brightness(1.1);
 	}
+	border: solid transparent;
+	transition:
+		border 0.2s,
+		filter 0.2s,
+		background 0.2s;
+
+	&:active {
+		border: solid black;
+	}
 }

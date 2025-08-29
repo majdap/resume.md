@@ -4,6 +4,7 @@ import {
 	ContentSectionProperty,
 } from '../types/content-section.type';
 import { v4 as uuidv4 } from 'uuid';
+import { Subject } from 'rxjs';
 
 @Injectable({
 	providedIn: 'root',
@@ -12,6 +13,9 @@ export class ContentService {
 	contentSections = signal<ContentSection[]>([]);
 	selectedSection = signal('');
 	globalStyle = signal('');
+
+	printSubject = new Subject();
+
 	constructor() {
 		// Load initial state from localStorage (if any)
 		try {

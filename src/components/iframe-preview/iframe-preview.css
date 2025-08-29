@@ -19,12 +19,6 @@ iframe {
 	min-width: 900px;
 }
 
-.print-button {
-	background: dodgerblue;
-	color: white;
-	margin-bottom: var(--space-s);
-}
-
 /* Print styles - hide iframe chrome and let content flow naturally */
 @media print {
 	@page {
