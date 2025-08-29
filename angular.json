@@ -40,7 +40,9 @@
 									"maximumError": "8kB"
 								}
 							],
-							"outputHashing": "all"
+							"outputHashing": "all",
+							"outputPath": "docs",
+							"index": "src/index.html"
 						},
 						"development": {
 							"optimization": false,
