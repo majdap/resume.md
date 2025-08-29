@@ -24,7 +24,12 @@
 						"styles": [
 							"src/styles.css"
 						],
-						"outputMode": "static"
+						"server": "src/main.server.ts",
+						"outputMode": "server",
+						"ssr": {
+							"entry": "src/server.ts"
+						},
+						"prerender": false
 					},
 					"configurations": {
 						"production": {
@@ -40,10 +45,7 @@
 									"maximumError": "8kB"
 								}
 							],
-							"outputHashing": "all",
-							"outputPath": "docs",
-							"index": "src/index.html",
-							"baseHref": "/resume.md/"
+							"outputHashing": "all"
 						},
 						"development": {
 							"optimization": false,
