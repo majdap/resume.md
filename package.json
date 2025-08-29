@@ -12,7 +12,8 @@
 		"test": "ng test",
 		"postinstall": "node node_modules/puppeteer/install.js",
 		"serve:ssr:cv-editor": "node dist/cv-editor/server/server.mjs",
-		"server-start": "ng build && node dist/cv-editor/server/server.mjs"
+		"server-start": "ng build && node dist/cv-editor/server/server.mjs",
+		"github-build": "ng build --configuration production --base-href 'https://majdap.github.io/resume.md/'"
 	},
 	"prettier": {
 		"overrides": [
