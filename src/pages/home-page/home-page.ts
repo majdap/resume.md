@@ -1,13 +1,13 @@
-import { Component, computed, ElementRef, inject, signal, ViewChild, Renderer2, effect, DestroyRef, viewChild } from '@angular/core';
+import { Component, DestroyRef, inject, signal, viewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { ContentService } from '../../services/content-service.service';
+import { debounceTime } from 'rxjs';
 import { ContentSection } from '../../components/content-section/content-section';
 import { Header } from '../../components/header/header';
 import { IframePreview } from '../../components/iframe-preview/iframe-preview';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ContentService } from '../../services/content-service.service';
 import { defaultStyling } from './default-styling';
-import { debounceTime } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 @Component({
 	selector: 'app-home-page',
 	imports: [ContentSection, Header, IframePreview, ReactiveFormsModule],
@@ -63,39 +63,10 @@ export class HomePage {
 			debounceTime(500),
 			takeUntilDestroyed(this.destroyRef)
 		).subscribe((value) => {
-			console.log("GLOBAL STYLES UPDATE IN HOME PAGE, ", value);
 			this.contentService.updateGlobalStyling(value.globalStyling!);
 		})
 	}
 
-	exportPdf() {
-		// const sections = this.contentSections();
-		// const globalStyles = this.contentService.globalStyle();
-		// try {
-		// 	const res = await fetch('/api/export/pdf', {
-		// 		method: 'POST',
-		// 		headers: { 'Content-Type': 'application/json' },
-		// 		body: JSON.stringify({ globalStyles, sections }),
-		// 	});
-		// 	if (!res.ok) throw new Error('Failed to export PDF');
-		// 	const blob = await res.blob();
-		// 	const url = URL.createObjectURL(blob);
-		// 	// Show inline if requested
-		// 	this.pdfUrl.set(url);
-		// 	this.safePdfUrl.set(
-		// 		this.domSanitizer.bypassSecurityTrustResourceUrl(url)
-		// 	);
-		// 	this.previewMode.set('pdf');
-		// } catch (e) {
-		// 	console.error(e);
-		// 	alert('PDF export failed.');
-		// }
-		const iframeComponent = this.iframePreview();
-		if (iframeComponent) {
-			console.log('yippee')
-			iframeComponent.printContent();
-		}
-	}
 
 	printContent() {
 		this.contentService.printSubject.next(null);

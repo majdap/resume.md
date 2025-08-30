@@ -57,8 +57,6 @@ export class IframePreview implements AfterViewInit {
 			this.sendContentUpdate(this.contentService.contentSections(), this.contentService.globalStyle(), this.contentService.selectedSection());
 		} else if (event.data?.type === MessageTypes.SECTION_MOVED) {
 			const { previousIndex, currentIndex } = event.data.sectionMoved;
-			console.log('Section moved');
-			console.log('previousIndex, currentIndex: ', previousIndex, currentIndex);
 			this.contentService.updateSectionIndex(previousIndex, currentIndex)
 		} else if (event.data?.type === MessageTypes.SECTION_SELECTED) {
 			this.contentService.selectedSection.set(event.data.sectionId)
@@ -98,26 +96,19 @@ export class IframePreview implements AfterViewInit {
 		}
 	}
 
-	ngOnChanges(changes: SimpleChanges) {
-		// Handle any input changes if needed
-	}
 
 	// Method to trigger print of iframe content
 	printContent() {
 		const contentWindow = this.iframe()?.nativeElement?.contentWindow;
 		if (contentWindow) {
-			console.log('ok this worked')
 			try {
 				contentWindow.focus();
 				contentWindow.print();
-				console.log('boom')
 			} catch (error) {
 				console.warn('Failed to print iframe content:', error);
 				// Fallback: print the whole page
 				window.print();
 			}
-		} else {
-			console.log('this didnt work - contentWindow is:', contentWindow)
 		}
 	}
 }

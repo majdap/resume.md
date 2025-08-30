@@ -31,12 +31,12 @@ export class ContentService {
 		// Persist on changes
 		effect(() => {
 			const sections = this.contentSections();
-			console.log("SERVICE sections udpated: ", sections)
+
 		});
 
 		effect(() => {
 			const selectedSection = this.selectedSection();
-			console.log('section selected: ', selectedSection);
+
 		})
 	}
 
@@ -60,7 +60,7 @@ export class ContentService {
 		property: ContentSectionProperty,
 		value: string
 	) {
-		console.log('Updating content section:', sectionId, property, value);
+
 		this.contentSections.update((sections) =>
 			sections.map((section) =>
 				section.id === sectionId
@@ -71,12 +71,12 @@ export class ContentService {
 	}
 
 	updateGlobalStyling(updatedGlobalStyle: string) {
-		console.log("updated new styles in the service: ", updatedGlobalStyle)
+
 		this.globalStyle.set(updatedGlobalStyle);
 	}
 
 	updateSectionIndex(oldIndex: number, newIndex: number) {
-		console.log("updating sections in service")
+
 		this.contentSections.update(currentSections => {
 			// 1. Create a new, mutable copy of the array
 			const newSections = [...currentSections];
