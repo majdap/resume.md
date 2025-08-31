@@ -60,7 +60,7 @@ export class DisplayContentSection {
 
 			// Update the style content - we know styleElement is not null here
 			if (this.styleElement) {
-				this.styleElement.textContent = `.content-section-${this.section().id
+				this.styleElement.textContent = `.document .content-section-${this.section().id
 					} { ${styling} }`;
 			}
 		});
