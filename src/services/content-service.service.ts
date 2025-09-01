@@ -5,6 +5,7 @@ import {
 } from '../types/content-section.type';
 import { v4 as uuidv4 } from 'uuid';
 import { Subject } from 'rxjs';
+import { defaultStyling } from '../pages/home-page/default-styling';
 
 @Injectable({
 	providedIn: 'root',
@@ -12,7 +13,7 @@ import { Subject } from 'rxjs';
 export class ContentService {
 	contentSections = signal<ContentSection[]>([]);
 	selectedSection = signal('');
-	globalStyle = signal('');
+	globalStyle = signal(defaultStyling);
 
 	printSubject = new Subject();
 
@@ -71,7 +72,6 @@ export class ContentService {
 	}
 
 	updateGlobalStyling(updatedGlobalStyle: string) {
-
 		this.globalStyle.set(updatedGlobalStyle);
 	}
 
@@ -90,5 +90,9 @@ export class ContentService {
 			// 4. Return the new array. The signal will see a new reference and trigger effects.
 			return newSections;
 		});
+	}
+
+	setContentSections(sections: ContentSection[]) {
+		this.contentSections.set(sections);
 	}
 }

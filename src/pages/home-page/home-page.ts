@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal, viewChild } from '@angular/core';
+import { Component, DestroyRef, effect, inject, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -7,7 +7,8 @@ import { ContentSection } from '../../components/content-section/content-section
 import { Header } from '../../components/header/header';
 import { IframePreview } from '../../components/iframe-preview/iframe-preview';
 import { ContentService } from '../../services/content-service.service';
-import { defaultStyling } from './default-styling';
+import { FileHandlerService } from '../../services/file-handler-service.service';
+
 @Component({
 	selector: 'app-home-page',
 	imports: [ContentSection, Header, IframePreview, ReactiveFormsModule],
@@ -20,6 +21,9 @@ export class HomePage {
 	private readonly contentService = inject(ContentService);
 	private readonly domSanitizer = inject(DomSanitizer);
 	private readonly destroyRef = inject(DestroyRef);
+	private readonly fileHandlerService = inject(FileHandlerService);
+
+	readonly globalStyle = this.contentService.globalStyle;
 
 	readonly contentSections = this.contentService.contentSections;
 	readonly previewMode = signal<'iframe' | 'pdf'>('iframe');
@@ -39,7 +43,7 @@ export class HomePage {
 	createGlobalStylingForm() {
 		this.globalStyleForm = this.formBuilder.nonNullable.group({
 			// defaultStyling will be the default page styling for the document
-			globalStyling: new FormControl<string>(defaultStyling ?? '', { nonNullable: true })
+			globalStyling: new FormControl<string>(this.globalStyle(), { nonNullable: true })
 		})
 	}
 
@@ -55,10 +59,13 @@ export class HomePage {
 		const isFirefox = /Firefox/i.test(nav?.userAgent || '');
 		this.showBrowserNote.set(!isChromium || isFirefox);
 		this.createGlobalStylingForm();
+
+		effect(() => {
+			this.globalStyleForm.controls.globalStyling.setValue(this.globalStyle(), { emitEvent: false });
+		});
 	}
 
 	ngOnInit() {
-		this.contentService.updateGlobalStyling(defaultStyling)
 		this.globalStyleForm.valueChanges.pipe(
 			debounceTime(500),
 			takeUntilDestroyed(this.destroyRef)
@@ -83,5 +90,23 @@ export class HomePage {
 
 	livePreview() {
 		this.previewMode.set("iframe");
+	}
+
+	saveToFile() {
+		this.fileHandlerService.saveToFile({ globalStyles: this.contentService.globalStyle(), sections: this.contentService.contentSections() });
+	}
+
+	async loadFromFile() {
+		try {
+			const { globalStyles, sections } = await this.fileHandlerService.loadFromFile();
+			this.contentService.setContentSections(sections);
+			this.contentService.updateGlobalStyling(globalStyles);
+		} catch (error) {
+			if (error instanceof Error) {
+				alert(error.message);
+			} else {
+				alert('An unknown error occurred.');
+			}
+		}
 	}
 }

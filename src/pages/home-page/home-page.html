@@ -15,6 +15,10 @@
 		}
 		<div class="button-container repel">
 			<button (click)="toggleGlobalStyles()">{{globalStylesVisible() ? 'Hide' : 'Show'}} Document Styles</button>
+			<div class="button-container">
+				<button (click)="loadFromFile()">Import 🡻</button>
+				<button (click)="saveToFile()">Export 🡹</button>
+			</div>
 			<button class="print-button" (click)="printContent()">Print 🖨️</button>
 			<!-- TODO: <button (click)="exportPdf()">Export PDF</button> -->
 			<!-- TODO:  <button (click)="livePreview()">Live Preview</button> -->
@@ -24,7 +28,7 @@
 		@if(globalStylesVisible()) {
 		<div class="global-styles">
 			<form [formGroup]="globalStyleForm">
-				<textarea formControlName="globalStyling">
+				<textarea formControlName="globalStyling" [value]="globalStyle()">
 				</textarea>
 			</form>
 		</div>}

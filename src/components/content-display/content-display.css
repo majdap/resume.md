@@ -25,19 +25,10 @@
 	overflow: visible;
 
 	/* Lock type scale inside page (11pt ≈ 14.6667px) */
-	font-size: 14.6667px; /* base body size */
 	line-height: 1.35;
 	/* Override fluid clamp() values locally to fixed px to avoid viewport-based shifts (esp. Firefox print) */
 	background: white;
-	--size-step--2: 9px;
-	--size-step--1: 11px;
-	--size-step-0: 13px;
-	--size-step-1: 14.6667px;
-	--size-step-2: 16px;
-	--size-step-3: 18px;
-	--size-step-4: 22px;
-	--size-step-5: 27px;
-	--size-step-6: 32px;
+
 	font-variant-ligatures: none;
 	font-synthesis: none; /* prevent synthetic bold/italic affecting metrics */
 	-moz-osx-font-smoothing: grayscale;
@@ -61,24 +52,6 @@
 	.selected {
 		outline: 2px solid var(--color-focus-outline);
 	}
-}
-
-/* Fixed heading sizes (prevent fluid vw shifts between preview & print) */
-:host h1 {
-	font-size: var(--size-step-4);
-	line-height: 1.15;
-}
-:host h2 {
-	font-size: var(--size-step-3);
-	line-height: 1.2;
-}
-:host h3 {
-	font-size: var(--size-step-2);
-	line-height: 1.25;
-}
-:host h4 {
-	font-size: var(--size-step-1);
-	line-height: 1.3;
 }
 
 /* Optional: Avoid breaking mid-section */
