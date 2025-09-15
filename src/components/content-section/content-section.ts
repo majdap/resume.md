@@ -1,15 +1,13 @@
 import {
+	AfterViewInit,
 	Component,
 	computed,
+	CUSTOM_ELEMENTS_SCHEMA,
 	DestroyRef,
 	inject,
 	input,
 	OnInit,
-	AfterViewInit,
-	ElementRef,
-	ViewChild,
-	signal,
-	CUSTOM_ELEMENTS_SCHEMA,
+	signal
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -32,7 +30,7 @@ import { ContentSectionProperty } from '../../types/content-section.type';
 		'[class.selected]': 'isSelected()',
 	},
 })
-export class ContentSection implements OnInit, AfterViewInit {
+export class ContentSection implements OnInit {
 	private readonly contentService = inject(ContentService);
 	private readonly formBuilder = inject(FormBuilder);
 	private readonly destroyRef = inject(DestroyRef);
@@ -119,7 +117,4 @@ export class ContentSection implements OnInit, AfterViewInit {
 		this.styleForm.patchValue({ styling: value });
 	}
 
-	ngAfterViewInit() {
-		// Templates are now registered globally in main.ts
-	}
 }

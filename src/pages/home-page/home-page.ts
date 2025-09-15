@@ -1,4 +1,4 @@
-import { Component, DestroyRef, effect, inject, signal, viewChild } from '@angular/core';
+import { Component, DestroyRef, effect, inject, signal, viewChild, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -13,6 +13,7 @@ import { FileHandlerService } from '../../services/file-handler-service.service'
 	selector: 'app-home-page',
 	imports: [ContentSection, Header, IframePreview, ReactiveFormsModule],
 	templateUrl: './home-page.html',
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 	styleUrl: './home-page.css',
 })
 export class HomePage {
@@ -85,6 +86,12 @@ export class HomePage {
 
 	dismissBrowserNote() {
 		this.showBrowserNote.set(false);
+	}
+
+	onGlobalStyleInput(event: any) {
+		const target = event.target as any;
+		const value = target.value || '';
+		this.globalStyleForm.patchValue({ globalStyling: value });
 	}
 
 

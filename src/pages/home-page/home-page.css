@@ -163,3 +163,8 @@
 		}
 	}
 }
+
+code-input {
+	border: 2px solid var(--color-primary-green-dark);
+	border-radius: var(--radius-m);
+}

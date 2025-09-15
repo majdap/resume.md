@@ -28,8 +28,9 @@
 		@if(globalStylesVisible()) {
 		<div class="global-styles">
 			<form [formGroup]="globalStyleForm">
-				<textarea formControlName="globalStyling" [value]="globalStyle()">
-				</textarea>
+					<label class="styling-label" for="globalStyling">Document Styles (CSS)</label>
+				<code-input language="css" template="syntax-highlighted" (input)="onGlobalStyleInput($event)" [value]="globalStyle()">
+				</code-input>
 			</form>
 		</div>}
 		<div class="content-sections">
