@@ -8,12 +8,15 @@
 		flex-direction: column;
 		border-radius: var(--radius-m);
 		position: relative;
-		textarea {
+		textarea,
+		code-input {
 			padding: var(--space-2xs);
 			margin-block-start: -2px;
 			border-radius: var(--radius-m);
 			margin-top: calc(var(--space-l) + 6px);
 			margin-bottom: var(--space-xs);
+			min-height: 120px;
+			font-family: "Martian Mono", monospace;
 		}
 	}
 	/* shared label styling */
@@ -35,7 +38,8 @@
 	}
 }
 
-:host(.selected) textarea {
+:host(.selected) textarea,
+:host(.selected) code-input {
 	outline: 2px solid var(--color-focus-outline);
 }
 

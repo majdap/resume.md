@@ -5,9 +5,10 @@ import {
 	ElementRef,
 	inject,
 	input,
+	OnDestroy,
 	output,
 	Renderer2,
-	SecurityContext
+	SecurityContext,
 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import markdownit from 'markdown-it';
@@ -22,9 +23,11 @@ import { MessageTypes } from '../../../types/window-message.type';
 	styleUrl: './display-content-section.css',
 	host: {
 		'(click)': 'sectionSelected()',
-	}
+		'[class]': '`content-section content-section-${section().id}`',
+		'[innerHTML]': 'htmlContent()',
+	},
 })
-export class DisplayContentSection {
+export class DisplayContentSection implements OnDestroy {
 	private readonly elementRef = inject(ElementRef);
 	private readonly renderer = inject(Renderer2);
 
@@ -50,24 +53,41 @@ export class DisplayContentSection {
 			);
 
 			if (!this.styleElement) {
-				// Create the style element once
+				// Create the style element once and append to document head
 				this.styleElement = this.renderer.createElement('style');
-				this.renderer.appendChild(
-					this.elementRef.nativeElement,
-					this.styleElement
-				);
+				if (this.styleElement) {
+					this.styleElement.setAttribute(
+						'data-section-id',
+						this.section().id
+					);
+					this.renderer.appendChild(document.head, this.styleElement);
+				}
 			}
 
 			// Update the style content - we know styleElement is not null here
 			if (this.styleElement) {
-				this.styleElement.textContent = `.document .content-section-${this.section().id
-					} { ${styling} }`;
+				this.styleElement.textContent = `.document .content-section-${
+					this.section().id
+				} { ${styling} }`;
 			}
 		});
 	}
 
 	sectionSelected() {
-		console.log('selecting section in iframe: ', this.section().id)
-		window.parent.postMessage({ type: MessageTypes.SECTION_SELECTED, sectionId: this.section().id }, '*')
+		console.log('selecting section in iframe: ', this.section().id);
+		window.parent.postMessage(
+			{
+				type: MessageTypes.SECTION_SELECTED,
+				sectionId: this.section().id,
+			},
+			'*'
+		);
+	}
+
+	ngOnDestroy() {
+		// Clean up the style element when component is destroyed
+		if (this.styleElement && this.styleElement.parentNode) {
+			this.styleElement.parentNode.removeChild(this.styleElement);
+		}
 	}
 }
