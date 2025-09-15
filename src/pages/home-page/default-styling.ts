@@ -27,8 +27,8 @@ h1 { font-size: var(--size-3); }
 font-family: 'Open Sans';
 
 /* Use this for spacing between sections */
-.content-section {
-	margin-bottom: 15px;
+.content-section + * {
+	margin-top: 10px;
 }
 
 

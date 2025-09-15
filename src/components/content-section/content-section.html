@@ -4,20 +4,30 @@
 	[formGroup]="contentForm"
 >
 	<label class="content-label" for="content">Content</label>
-	<textarea
+	<code-input
+		language="markdown"
+		template="syntax-highlighted"
 		placeholder="Enter MD/HTML..."
+		[value]="contentForm.get('content')?.value || ''"
+		(input)="onContentInput($event)"
 		(focus)="sectionSelected()"
-		formControlName="content"
-	></textarea>
+		data-gramm="false"
+		spellcheck="false"
+	></code-input>
 </form>
 
 <form class="style-form" [class.hidden]="showContent()" [formGroup]="styleForm">
 	<label class="styling-label" for="styling">Styling</label>
-	<textarea
+	<code-input
+		language="css"
+		template="syntax-highlighted"
 		placeholder="Enter CSS..."
+		[value]="styleForm.get('styling')?.value || ''"
+		(input)="onStylingInput($event)"
 		(focus)="sectionSelected()"
-		formControlName="styling"
-	></textarea>
+		data-gramm="false"
+		spellcheck="false"
+	></code-input>
 </form>
 
 <div class="section-buttons">

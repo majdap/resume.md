@@ -22,7 +22,20 @@
 							}
 						],
 						"styles": [
-							"src/styles.css"
+							"src/styles.css",
+							"node_modules/prismjs/themes/prism.css",
+							"node_modules/@webcoder49/code-input/code-input.css"
+						],
+						"scripts": [
+							"node_modules/prismjs/components/prism-core.min.js",
+							"node_modules/prismjs/components/prism-clike.min.js",
+							"node_modules/prismjs/components/prism-css.min.js",
+							"node_modules/prismjs/components/prism-css-extras.min.js",
+							"node_modules/prismjs/components/prism-javascript.min.js",
+							"node_modules/prismjs/components/prism-markup.min.js",
+							"node_modules/prismjs/components/prism-markdown.min.js",
+							"node_modules/@webcoder49/code-input/code-input.min.js",
+							"node_modules/@webcoder49/code-input/plugins/indent.min.js"
 						],
 						"outputMode": "static",
 						"prerender": false
@@ -76,9 +89,7 @@
 								"input": "public"
 							}
 						],
-						"styles": [
-							"src/styles.css"
-						]
+						"styles": ["src/styles.css"]
 					}
 				}
 			}
