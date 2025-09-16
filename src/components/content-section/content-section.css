@@ -10,6 +10,7 @@
 		position: relative;
 		textarea,
 		code-input {
+			resize: vertical;
 			padding: var(--space-2xs);
 			margin-block-start: -2px;
 			border-radius: var(--radius-m);
