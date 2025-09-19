@@ -13,4 +13,8 @@ export const routes: Routes = [
 				(m) => m.ContentDisplay
 			),
 	},
+	{
+		path: '**',
+		redirectTo: '/',
+	}
 ];
